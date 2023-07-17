@@ -2,6 +2,7 @@
 #include "edit.mqh";
 #include "background.mqh";
 #include "bthbit.mqh";
+#include "..\..\..\CustomEvent\BBCustomEvent.mqh";
 //+------------------------------------------------------------------+
 BBWidgetTerminal Terminal;
 //+------------------------------------------------------------------+
@@ -16,7 +17,8 @@ class BBWidget
 protected:
     enum EventCustom
     {
-        Ev_RollingTo
+        Rollling_Ev = CHARTEVENT_CUSTOM + Ev_RollingTo,
+        Recieve_Ev = CHARTEVENT_CUSTOM + DataHandshake
     };
 
 private:
@@ -171,7 +173,7 @@ public:
 
         switch (id)
         {
-        case (CHARTEVENT_CUSTOM + Ev_RollingTo):
+        case Rollling_Ev:
             tx = (int)(tx + lparam);
             tx = (tx < -def_MaxWidth ? m_Infos.MaxPositionX : (tx > m_Infos.MaxPositionX ? -def_MaxWidth : tx));
             for (int c0 = 0, px = tx; (c0 < m_Infos.nSymbols); c0++)
@@ -183,11 +185,21 @@ public:
             }
             ChartRedraw(Terminal.Get_ID());
             break;
+
+        case Recieve_Ev:
+            if (StringSplit(sparam,'#', szRet) == 3)
+            {
+                if (szRet[2] == "TID")
+                    EventChartCustom(Terminal.Get_ID(), DataHandshake, Terminal.Get_ID(), 0.0, (string)(szRet[0]+"#"+szRet[1]));
+            }
+            break;
+
         case CHARTEVENT_CHART_CHANGE:
             Terminal.Resize();
             m_Infos.MaxPositionX = macro_MaxPosition;
             ChartRedraw(Terminal.Get_ID());
             break;
+
         case CHARTEVENT_OBJECT_DELETE:
             if (StringSubstr(sparam, 0, StringLen(def_PrefixName)) == def_PrefixName)
                 if (StringSplit(sparam, '$', szRet) == 2)
@@ -204,16 +216,8 @@ public:
                     ChartRedraw(Terminal.Get_ID());
                 }
             break;
+
         case CHARTEVENT_OBJECT_CLICK:
-            if (StringSplit(sparam, '$', szRet) == 2)
-            {
-                SymbolSelect(szRet[1], true);
-                szRet[0] = ChartSymbol(Terminal.Get_ID());
-                if (ChartSetSymbolPeriod(Terminal.Get_ID(), szRet[1], PERIOD_CURRENT))
-                    SymbolSelect(szRet[0], false);
-                else
-                    SymbolSelect(szRet[1], false);
-            }
             break;
         }
     }

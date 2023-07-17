@@ -131,7 +131,7 @@ void OnTimer()
     EventKillTimer();
     return;
   }
-	EventChartCustom(0, BBWidget::Ev_RollingTo, user01, 0.0, "");
+	EventChartCustom(0, Ev_RollingTo, user01, 0.0, "");
 
   if (enableServer)
   {
@@ -166,16 +166,6 @@ void OnChartEvent(const int id,
   if (id == CHARTEVENT_OBJECT_CLICK) //
   {
     ButtonsCheck(sparam);
-  }
-
-  if (id == CHARTEVENT_CHART_CHANGE)
-  {
-    for (int i = 0; i < ArraySize(BotSignals); i++)
-    {
-      // DCInterface* providerStorage = BotSignals[i].GetDCInterface();
-      // // DCInterfaceData providerStorage = BotSignals[i].;
-      // Print("here ",providerStorage);
-    }
   }
 }
 
