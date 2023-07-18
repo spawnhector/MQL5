@@ -10,6 +10,7 @@
 // #include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\InterfaceAnalyzer.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh>;
 
 class BBAnalyzer
 {
@@ -18,11 +19,17 @@ private:
 public:
     BBInterface *__Interface;
     AnalyzerInterface *_analyzeInterface;
+    ChartAnalyzer* _chartAnalyzer;
 
     BBAnalyzer(BBInterface &_Interface)
     {
         __Interface = &_Interface;
         _analyzeInterface = new AnalyzerInterface(_Interface);
+    }
+
+    ChartAnalyzer* GetChartAnalyzer(){
+        _chartAnalyzer = new ChartAnalyzer();
+        return _chartAnalyzer;
     }
     
     ~BBAnalyzer(){

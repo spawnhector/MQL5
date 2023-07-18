@@ -19,7 +19,7 @@ private:
     ProviderData providerData;
     BBTrader* trader;
     BBInterface *__Interface;
-    BBAnalyzer *Analyze;
+    BBAnalyzer *Analyzer;
     DCInterfaceData interfaceData;
 
 public:
@@ -31,13 +31,14 @@ public:
         {
             __Interface.GetObjectStartBar();
             __Interface.PlotBB();
-            Analyze = new BBAnalyzer(__Interface);
+            Analyzer = new BBAnalyzer(__Interface);
         }
     }
+
     ~BreakerBlock(){
         delete trader;
         delete __Interface;
-        delete Analyze;
+        delete Analyzer;
     }
 
     void addIndex(int index) override{
@@ -52,7 +53,7 @@ public:
 
     __Trader* GetTrader() override
     {
-        trader = new BBTrader(providerData);
+        trader = new BBTrader(Analyzer,providerData);
         return trader;
     }
 
