@@ -3,7 +3,6 @@
 //|                                                    ronald Hector |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
-#property strict
 #property copyright "ronald Hector"
 #property link "https://www.mql5.com"
 #property version "1.00"
@@ -36,12 +35,9 @@ CTrade m_trade;           // trading object
 #include <HectperScalper\MultiChart\CreateCharts.mqh>;
 #include <HectperScalper\MultiChart\CreateInstances.mqh>;
 #include <HectperScalper\MultiChart\ticks.mqh>;
-
 #include <HectperScalper\wsc\connection.mqh>;
 #include <HectperScalper\customChatObjects.mqh>;
-// #include <HectperScalper\peakFindAndTrade.mqh>;
 #include <HectperScalper\CustomTicket.mqh>;
-
 #include <HectperScalper\init\start.mqh>;
 
 #include <HectperScalper\MultiChart\chart.mqh>;
@@ -53,6 +49,7 @@ BotInstance *Bots[];
 
 #include <HectperScalper\SignalProviders\signalprovider.mqh>
 SignalProvider *Signals;
+
 #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 
 // #include <HectperScalper\Data\sharedData.mqh>
@@ -68,7 +65,6 @@ int OnInit()
     Print("Automated trading is currently disabled. Please enable automated trading to use this Expert Advisor.");
     return INIT_FAILED;
   }
-  Signals = new SignalProvider();
 
   if (isTestAccount)
   {
@@ -80,12 +76,11 @@ int OnInit()
   if (enableServer)
   {
     if (ConnectServer())
-    {
       return INIT_SUCCEEDED;
-    }
     return INIT_FAILED;
   }
 
+  Signals = new SignalProvider();
   CreateCharts();
   CreateInstances();
   if (bInterfaceE)
@@ -99,16 +94,17 @@ int OnInit()
 void OnDeinit(const int reason)
 {
   DeleteSimpleInterface();
-  Signals.removeProviders();
+  if (Signals)
+    Signals.removeProviders();
   delete Signals;
 
   for (int j = 0; j < ArraySize(Charts); j++)
     delete Charts[j];
   for (int j = 0; j < ArraySize(Bots); j++)
-  {
-    // Bots[j].clearBase();
     delete Bots[j];
-  }
+  for (int j = 0; j < ArraySize(BotSignals); j++)
+    delete BotSignals[j];
+
   EventKillTimer();
 }
 
@@ -131,7 +127,7 @@ void OnTimer()
     EventKillTimer();
     return;
   }
-	EventChartCustom(0, Ev_RollingTo, user01, 0.0, "");
+  EventChartCustom(0, Ev_RollingTo, user01, 0.0, "");
 
   if (enableServer)
   {
@@ -158,14 +154,14 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
+
+  if (id == CHARTEVENT_OBJECT_CLICK)
+  {
+    ButtonsCheck(sparam);
+  }
   for (int i = 0; i < ArraySize(BotSignals); i++)
   {
     BotSignals[i].DispatchMessage(id, lparam, dparam, sparam);
-  }
-
-  if (id == CHARTEVENT_OBJECT_CLICK) //
-  {
-    ButtonsCheck(sparam);
   }
 }
 

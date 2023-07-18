@@ -8,21 +8,18 @@
 #property version "Version = 1.00"
 #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 #include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
 
 class BBInterfaceHelper : public DCInterface
 {
 
 private:
-    _Trader *parent;
 
 protected:
     DCInterfaceData DCID;
 
 public:
-    BBInterfaceHelper(_Trader &_parent)
+    BBInterfaceHelper()
     {
-        parent = &_parent;
     }
     
     DCInterfaceData GetInterfaceData() const override
@@ -64,17 +61,17 @@ public:
         }
         DCID.SupportLevel = rangeLow;
         DCID.ResistanceLevel = rangeHigh;
-        string objectName = "BB-Plot-"+parent.CurrentSymbol+"-SupportLevel";
+        string objectName = "BB-Plot-"+_Symbol+"-SupportLevel";
         ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, rangeTime, rangeLow);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
-        objectName = "BB-Plot-"+parent.CurrentSymbol+"-ResistanceLevel";
+        objectName = "BB-Plot-"+_Symbol+"-ResistanceLevel";
         ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, rangeTime, rangeHigh);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
     }
 
     int GetBarIndexByTime(const datetime &targetTime)
     {
-        int barIndex = iBarShift(parent.CurrentSymbol, PERIOD_CURRENT, targetTime, true);
+        int barIndex = iBarShift(_Symbol, PERIOD_CURRENT, targetTime, true);
         if (barIndex != -1)
         {
             return barIndex;

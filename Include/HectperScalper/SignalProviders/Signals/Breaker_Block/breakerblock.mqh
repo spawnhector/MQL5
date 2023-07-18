@@ -10,19 +10,34 @@
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\interface.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBTrader.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 
 class BreakerBlock : public Provider
 {
 private:
     ProviderData providerData;
     BBTrader* trader;
+    BBInterface *__Interface;
+    BBAnalyzer *Analyze;
+    DCInterfaceData interfaceData;
 
 public:
     BreakerBlock(){
         providerData.ProviderName = "BreakerBlock";
+        __Interface = new BBInterface();
+        interfaceData = __Interface.GetInterfaceData();
+        if (interfaceData.redRectangle && interfaceData.greenRectangle)
+        {
+            __Interface.GetObjectStartBar();
+            __Interface.PlotBB();
+            Analyze = new BBAnalyzer(__Interface);
+        }
     }
     ~BreakerBlock(){
         delete trader;
+        delete __Interface;
+        delete Analyze;
     }
 
     void addIndex(int index) override{
@@ -35,9 +50,9 @@ public:
         return providerData;
     }
 
-    __Trader* GetTrader(_Trader &parent) override
+    __Trader* GetTrader() override
     {
-        trader = new BBTrader(parent,providerData);
+        trader = new BBTrader(providerData);
         return trader;
     }
 

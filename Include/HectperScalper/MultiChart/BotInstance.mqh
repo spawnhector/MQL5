@@ -46,18 +46,13 @@ public:
     chartindex = _chartindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
     Optimizer = new TradeOptimizer();
-
-    for (int i = 0; i < ArraySize(Signals.providers); i++)
-    {
-      addSignalTrader(Signals.providers[i].GetTrader(this));
-    }
   }
 
   ~BotInstance()
   {
     delete Optimizer;
   }
-  
+
   void InstanceTick()
   {
     MagicF = order_magic;
@@ -93,11 +88,6 @@ public:
   // }
 
 private:
-  void addSignalTrader(__Trader &_signaltrader)
-  {
-    ArrayResize(BotSignals, ArraySize(BotSignals) + 1);
-    BotSignals[ArraySize(BotSignals) - 1] = &_signaltrader;
-  }
   bool bOurMagic(ulong ticket, int magiccount) // whether the magic number of the current deal matches one of the possible magic numbers of our robot
   {
     int MagicT[];

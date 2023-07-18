@@ -7,25 +7,20 @@
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
 #include <ChartObjects\ChartObject.mqh>
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Helpers\BBInterfaceHelper.mqh>;
 #include "Widget\Widget.mqh"
 BBWidget Widget;
 
 class BBInterface : public BBInterfaceHelper
 {
-private:
-    _Trader *parent;
 public:
-    BBInterface(_Trader &_parent) : BBInterfaceHelper(_parent)
+    BBInterface() : BBInterfaceHelper()
     {
-        parent = &_parent;
         this.createDuplicateChart();
     }
 
     ~BBInterface()
     {
-        delete parent;
         ChartClose(DCID.chartID);
     }
 
@@ -34,7 +29,7 @@ public:
         if (!DCID.chartID)
         {
             ENUM_TIMEFRAMES timeframe = PERIOD_M1;
-            DCID.chartID = ChartOpen(parent.CurrentSymbol, timeframe);
+            DCID.chartID = ChartOpen(_Symbol, timeframe);
             if (DCID.chartID < 0)
                 Print("Failed to open the chart! Error code:", GetLastError());
             else
@@ -53,7 +48,7 @@ public:
     void AddVolumeIndicator()
     {
 		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int volumesIndicatorHandle = iVolumes(parent.CurrentSymbol, PERIOD_M1, VOLUME_TICK);
+        int volumesIndicatorHandle = iVolumes(_Symbol, PERIOD_M1, VOLUME_TICK);
         if (volumesIndicatorHandle != INVALID_HANDLE)
         {
             ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), volumesIndicatorHandle);
@@ -66,7 +61,7 @@ public:
 
     void addCustomIndicator(){
 		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int customIndicator = iCustom(parent.CurrentSymbol, PERIOD_M1,"Examples\\InterfacePriceButton");
+        int customIndicator = iCustom(_Symbol, PERIOD_M1,"Examples\\InterfacePriceButton");
         if (customIndicator != INVALID_HANDLE)
         {
             if (!ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), customIndicator))Print("Failed to attach custom indicator.");
@@ -95,7 +90,7 @@ public:
         long x2 = DCID.onew;
         long y2 = height1;
 
-        string objectName = parent.CurrentSymbol + "RedRect";
+        string objectName = _Symbol + "RedRect";
         DCID.redRectangle = ObjectCreate(DCID.chartID, objectName, OBJ_RECTANGLE_LABEL, 0, 0, 0);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrRed);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_BGCOLOR, clrRed);
@@ -109,7 +104,7 @@ public:
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_SELECTABLE, false);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_SELECTED, false);
 
-        objectName = parent.CurrentSymbol + "GreenRect";
+        objectName = _Symbol + "GreenRect";
         DCID.greenRectangle = ObjectCreate(DCID.chartID, objectName, OBJ_RECTANGLE_LABEL, 0, 0, 0);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrGreen);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_BGCOLOR, clrGreen);
@@ -130,14 +125,14 @@ public:
         long height1 = (DCID.chartHeight - DCID.bidY);
         long height2 = DCID.bidY;
         long y2 = height1;
-        string objectName = parent.CurrentSymbol + "RedRect";
+        string objectName = _Symbol + "RedRect";
         int objectID = ObjectFind(DCID.chartID, objectName); // Retrieve the ID of the chart object
         if (objectID != -1)                                  // Check if the object was found
         {
             ObjectSetInteger(DCID.chartID, objectName, OBJPROP_XSIZE, DCID.chartWidth); // Resize the width of the object
             ObjectSetInteger(DCID.chartID, objectName, OBJPROP_YSIZE, height1);         // Resize the height of the object
         }
-        objectName = parent.CurrentSymbol + "GreenRect";
+        objectName = _Symbol + "GreenRect";
         objectID = ObjectFind(DCID.chartID, objectName); // Retrieve the ID of the chart object
         if (objectID != -1)                              // Check if the object was found
         {
@@ -150,8 +145,8 @@ public:
     void GetObjectStartBar()
     {
         GetCandleByXY(
-            (int)ObjectGetInteger(DCID.chartID, parent.CurrentSymbol + "RedRect", OBJPROP_XDISTANCE),
-            (int)ObjectGetInteger(DCID.chartID, parent.CurrentSymbol + "RedRect", OBJPROP_YDISTANCE));
+            (int)ObjectGetInteger(DCID.chartID, _Symbol + "RedRect", OBJPROP_XDISTANCE),
+            (int)ObjectGetInteger(DCID.chartID, _Symbol + "RedRect", OBJPROP_YDISTANCE));
     }
 
     void GetCandleByXY(int x, int y)
@@ -165,7 +160,7 @@ public:
             if (barIndex != -1)
             {
                 MqlRates rates[1];
-                int copied = CopyRates(parent.CurrentSymbol, PERIOD_CURRENT, barIndex, 1, rates);
+                int copied = CopyRates(_Symbol, PERIOD_CURRENT, barIndex, 1, rates);
                 if (copied > 0)
                 {
                     DCID.startBar.barIndex = barIndex;
@@ -181,12 +176,13 @@ public:
 
     long getBidY()
     {
+        double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
         double chartPriceMin = ChartGetDouble(DCID.chartID, CHART_PRICE_MIN);
         double chartPriceMax = ChartGetDouble(DCID.chartID, CHART_PRICE_MAX);
         long chartYDistance = ChartGetInteger(DCID.chartID, CHART_WINDOW_YDISTANCE);
         long _chartHeight = ChartGetInteger(DCID.chartID, CHART_HEIGHT_IN_PIXELS);
 
-        return chartYDistance + (long)((parent.PriceBid - chartPriceMin) / (chartPriceMax - chartPriceMin) * _chartHeight);
+        return chartYDistance + (long)((bid - chartPriceMin) / (chartPriceMax - chartPriceMin) * _chartHeight);
     }
 
     void PlaceHorizontalLine(double price, const string &objectName, const color lineColor = clrRed)
@@ -203,14 +199,13 @@ public:
 
     void PlotBB()
     {
-        string objectName = "BB-Plot-" + parent.CurrentSymbol + "Start";
+        string objectName = "BB-Plot-" + _Symbol + "Start";
         PlaceVerticalLine(DCID.startBar.time, objectName, clrHotPink);
         IdentifySupportResistanceLevels();
     }
 
     void clearBase()
     {
-        // delete parent;
     }
 };
 //+------------------------------------------------------------------+

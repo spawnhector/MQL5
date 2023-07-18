@@ -4,7 +4,7 @@
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 #property copyright "ronald Hector"
-#property link      "https://www.mql5.com"
+#property link "https://www.mql5.com"
 //+------------------------------------------------------------------+
 //| defines                                                          |
 //+------------------------------------------------------------------+
@@ -29,17 +29,31 @@
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CreateInstances()//attach all virtual robots to charts
+
+#include <HectperScalper\SignalProviders\traderInterface.mqh>;
+void CreateInstances() // attach all virtual robots to charts
+{
+  if (Signals)
+    for (int i = 0; i < ArraySize(Signals.providers); i++)
+    {
+      addSignalTrader(Signals.providers[i].GetTrader());
+    };
+    
+  for (int i = 0; i < ArraySize(S); i++)
   {
-   for(int i = 0; i < ArraySize(S); i++)
-     {
-      for(int j = 0; j < ArraySize(Charts); j++)
-        {
-         if(Charts[j].CurrentSymbol == S[i])
-           {
-            Bots[i] = new BotInstance(i,j);
-            break;
-           }
-        }
-     }
+    for (int j = 0; j < ArraySize(Charts); j++)
+    {
+      if (Charts[j].CurrentSymbol == S[i])
+      {
+        Bots[i] = new BotInstance(i, j);
+        break;
+      }
+    }
   }
+}
+
+void addSignalTrader(__Trader &_signaltrader)
+{
+  ArrayResize(BotSignals, ArraySize(BotSignals) + 1);
+  BotSignals[ArraySize(BotSignals) - 1] = &_signaltrader;
+}

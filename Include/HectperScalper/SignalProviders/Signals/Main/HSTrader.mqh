@@ -24,10 +24,10 @@ protected:
    HSInterface *__Interface;
 
 public:
-   MainTrader(_Trader &parent,ProviderData &_providerData)
+   MainTrader(ProviderData &_providerData)
    {
       providerData = _providerData;
-        __Interface = new HSInterface(parent);
+      //   __Interface = new HSInterface(parent);
    }
    ~MainTrader(){
       delete __Interface;
@@ -44,10 +44,10 @@ public:
         return providerData;
     }
 
-    DCInterface* GetDCInterface() override
-    {
-        return __Interface;
-    }
+   //  DCInterface* GetDCInterface() override
+   //  {
+   //      return __Interface;
+   //  }
 
     void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam){
       //   Print("dispatch");

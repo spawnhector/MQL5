@@ -16,7 +16,7 @@ interface Provider
 {
 public:
     virtual ProviderData GetProviderData() const = 0;
-    virtual __Trader* GetTrader(_Trader &parent) { return trader;};
+    virtual __Trader* GetTrader() { return trader;};
     virtual void addIndex(int index){};
     virtual void clearBase(){};
     

@@ -29,7 +29,7 @@
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
+// #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 
 void CreateCharts() // create the chart objects
 {
@@ -92,5 +92,6 @@ void CreateCharts() // create the chart objects
     Charts[j].CurrentSymbol = Symbols[j];        // symbol
     Charts[j].Timeframe = T[j];                  // period
   }
+  // Print(Charts[1].CloseI);
   ArrayResize(Bots, ArraySize(S)); // set the size of the bot array
 }

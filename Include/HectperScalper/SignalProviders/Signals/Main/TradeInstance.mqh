@@ -36,9 +36,9 @@ public:
         return providerData;
     }
 
-    __Trader* GetTrader(_Trader &parent) override
+    __Trader* GetTrader() override
     {
-        trader = new MainTrader(parent,providerData);
+        trader = new MainTrader(providerData);
         return trader;
     }
     
