@@ -53,7 +53,7 @@ public:
 
     __Trader* GetTrader() override
     {
-        trader = new BBTrader(Analyzer,providerData);
+        trader = new BBTrader(providerData);
         return trader;
     }
 

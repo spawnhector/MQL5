@@ -1,13 +1,14 @@
-class ChartAnalyzer
+#include "..\Helpers\BBChartHelpers.mqh";
+
+class ChartAnalyzer : public BBChartHelpers
 {
+protected:
 public:
-    struct stc01
-    {
-        bool analyzing;
-    } root;
-    ChartAnalyzer() {}
+    ChartAnalyzer() : BBChartHelpers() {}
     ~ChartAnalyzer() {}
-    void analyzeChart(){
+    void analyzeChart(_Trader &parent)
+    {
         root.analyzing = true;
+        IdentifySupportResistanceLevels(parent);
     }
 }

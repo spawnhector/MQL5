@@ -28,11 +28,15 @@
 
 #include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
 #include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh>;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 class BotInstance : public _Trader // separate robot object
 {
+  protected:
+  ChartAnalyzer *chartAnalyzer;
+
 public:
   CPositionInfo m_position;
   CTrade m_trade;
@@ -40,17 +44,21 @@ public:
   int chartindex;
   double CorrectedLot;
   TradeOptimizer *Optimizer;
+  
 
   BotInstance(int _index, int _chartindex) : _Trader()
   {
     chartindex = _chartindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
     Optimizer = new TradeOptimizer();
+    chartAnalyzer = new ChartAnalyzer();
+    chartAnalyzer.analyzeChart(this);
   }
 
   ~BotInstance()
   {
     delete Optimizer;
+    delete chartAnalyzer;
   }
 
   void InstanceTick()
