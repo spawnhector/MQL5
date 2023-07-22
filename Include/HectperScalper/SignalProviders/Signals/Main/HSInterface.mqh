@@ -36,7 +36,7 @@ public:
         return DCID;
     }
     
-    void createDuplicateChart() override
+    void createDuplicateChart(string symb)
     {
         if (!dupicateCharts)
         {

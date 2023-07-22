@@ -34,25 +34,23 @@
 //+------------------------------------------------------------------+
 class BotInstance : public _Trader // separate robot object
 {
-  protected:
-  ChartAnalyzer *chartAnalyzer;
-
+protected:
 public:
+  ChartAnalyzer *chartAnalyzer;
   CPositionInfo m_position;
   CTrade m_trade;
   double CurrentLot;
   int chartindex;
   double CorrectedLot;
   TradeOptimizer *Optimizer;
-  
 
   BotInstance(int _index, int _chartindex) : _Trader()
   {
     chartindex = _chartindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
     Optimizer = new TradeOptimizer();
-    chartAnalyzer = new ChartAnalyzer();
-    chartAnalyzer.analyzeChart(this);
+    chartAnalyzer = new ChartAnalyzer(this);
+    chartAnalyzer.analyzeChart();
   }
 
   ~BotInstance()
@@ -76,6 +74,7 @@ public:
           "m1",
           clrGainsboro);
 
+      chartAnalyzer.analyzeOnTick(this);
       for (int i = 0; i < ArraySize(BotSignals); i++)
       {
         ProviderData providerStorage = BotSignals[i].GetProviderData();

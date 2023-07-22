@@ -14,4 +14,5 @@ struct DCInterfaceData
     double SupportLevel;
     double ResistanceLevel;
     StartBar startBar;
+    string symbol;
 };

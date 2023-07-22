@@ -18,6 +18,8 @@
 CPositionInfo m_position; // trade position object
 CTrade m_trade;           // trading object
 
+#include "..\..\..\Include\HectperScalper\SignalProviders\CustomEvent\BBCustomEvent.mqh";
+
 #include <HectperScalper\AppInterface\CreateSimpleInterface.mqh>;
 #include <HectperScalper\AppInterface\DeleteSimpleInterface.mqh>;
 #include <HectperScalper\AppInterface\ButtonCheck.mqh>;
@@ -51,6 +53,7 @@ BotInstance *Bots[];
 SignalProvider *Signals;
 
 #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
+
 
 // #include <HectperScalper\Data\sharedData.mqh>
 
@@ -159,10 +162,11 @@ void OnChartEvent(const int id,
   {
     ButtonsCheck(sparam);
   }
-  for (int i = 0; i < ArraySize(BotSignals); i++)
-  {
-    BotSignals[i].DispatchMessage(id, lparam, dparam, sparam);
-  }
+  if (Signals)
+    for (int i = 0; i < ArraySize(Signals.providers); i++)
+    {
+      Signals.providers[i].DispatchMessage(id, lparam, dparam, sparam);
+    };
 }
 
 //////////////////////////////////////

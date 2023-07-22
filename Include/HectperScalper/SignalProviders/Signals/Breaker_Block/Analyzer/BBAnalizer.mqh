@@ -27,13 +27,14 @@ public:
         _analyzeInterface = new AnalyzerInterface(_Interface);
     }
 
-    ChartAnalyzer* GetChartAnalyzer(){
-        _chartAnalyzer = new ChartAnalyzer();
-        return _chartAnalyzer;
-    }
+    // ChartAnalyzer* GetChartAnalyzer(){
+    //     _chartAnalyzer = new ChartAnalyzer();
+    //     return _chartAnalyzer;
+    // }
     
     ~BBAnalyzer(){
         delete _analyzeInterface;
+        delete __Interface;
     }
 };
 //+------------------------------------------------------------------+

@@ -5,5 +5,5 @@ interface DCInterface
 {
 public:
     virtual DCInterfaceData GetInterfaceData() const = 0;
-    virtual void createDuplicateChart(){};
+    // virtual void createDuplicateChart(string symb){};
 };

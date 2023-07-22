@@ -2,13 +2,18 @@
 
 class ChartAnalyzer : public BBChartHelpers
 {
-protected:
 public:
-    ChartAnalyzer() : BBChartHelpers() {}
+    ChartAnalyzer(_Trader &_parent) : BBChartHelpers() {parent = _parent;}
     ~ChartAnalyzer() {}
-    void analyzeChart(_Trader &parent)
+
+    void analyzeChart()
     {
         root.analyzing = true;
-        IdentifySupportResistanceLevels(parent);
+        IdentifySupportResistanceLevels();
+    }
+    
+    void analyzeOnTick(_Trader &_parent){
+        parent = _parent;
+        CheckPriceBreakOut();
     }
 }

@@ -12,11 +12,13 @@
 #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 #include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
+// #include "breakerblock.mqh";
 
 class BBTrader : public __Trader
 {
 protected:
     ProviderData providerData;
+    // Provider *bb;
 
 public:
     BBTrader(ProviderData &_providerData)
@@ -30,7 +32,6 @@ public:
 
     void _Trade(_Trader &parent)
     {
-        
         // Analyze._analyzeInterface.onTick(parent);
     }
 
@@ -39,7 +40,8 @@ public:
         return providerData;
     }
 
-    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam){
+    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
+    {
         Widget.DispatchMessage(id, lparam, dparam, sparam);
     }
 

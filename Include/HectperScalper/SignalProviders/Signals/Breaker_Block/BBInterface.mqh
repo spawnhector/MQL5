@@ -9,14 +9,15 @@
 #include <ChartObjects\ChartObject.mqh>
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Helpers\BBInterfaceHelper.mqh>;
 #include "Widget\Widget.mqh"
+
 BBWidget Widget;
 
 class BBInterface : public BBInterfaceHelper
 {
 public:
-    BBInterface() : BBInterfaceHelper()
+    BBInterface(string _symb) : BBInterfaceHelper()
     {
-        this.createDuplicateChart();
+        this.createDuplicateChart(_symb);
     }
 
     ~BBInterface()
@@ -24,18 +25,17 @@ public:
         ChartClose(DCID.chartID);
     }
 
-    void createDuplicateChart() override
+    void createDuplicateChart(string symb)
     {
+        DCID.symbol = symb;
         if (!DCID.chartID)
         {
             ENUM_TIMEFRAMES timeframe = PERIOD_M1;
-            DCID.chartID = ChartOpen(_Symbol, timeframe);
+            DCID.chartID = ChartOpen(DCID.symbol, timeframe);
             if (DCID.chartID < 0)
                 Print("Failed to open the chart! Error code:", GetLastError());
             else
             {
-                long currentScale = ChartGetInteger(DCID.chartID, CHART_SCALE);
-                ChartSetInteger(DCID.chartID, CHART_SCALE, currentScale - 1);
                 ChartSetInteger(DCID.chartID, CHART_SHOW_GRID, false);
                 DrawRectangles();
                 AddVolumeIndicator();
@@ -48,7 +48,7 @@ public:
     void AddVolumeIndicator()
     {
 		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int volumesIndicatorHandle = iVolumes(_Symbol, PERIOD_M1, VOLUME_TICK);
+        int volumesIndicatorHandle = iVolumes(DCID.symbol, PERIOD_M1, VOLUME_TICK);
         if (volumesIndicatorHandle != INVALID_HANDLE)
         {
             ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), volumesIndicatorHandle);
@@ -61,7 +61,7 @@ public:
 
     void addCustomIndicator(){
 		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int customIndicator = iCustom(_Symbol, PERIOD_M1,"Examples\\InterfacePriceButton");
+        int customIndicator = iCustom(DCID.symbol, PERIOD_M1,"Examples\\InterfacePriceButton");
         if (customIndicator != INVALID_HANDLE)
         {
             if (!ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), customIndicator))Print("Failed to attach custom indicator.");
@@ -90,7 +90,7 @@ public:
         long x2 = DCID.onew;
         long y2 = height1;
 
-        string objectName = _Symbol + "RedRect";
+        string objectName = DCID.symbol + "RedRect";
         DCID.redRectangle = ObjectCreate(DCID.chartID, objectName, OBJ_RECTANGLE_LABEL, 0, 0, 0);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrRed);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_BGCOLOR, clrRed);
@@ -104,7 +104,7 @@ public:
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_SELECTABLE, false);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_SELECTED, false);
 
-        objectName = _Symbol + "GreenRect";
+        objectName = DCID.symbol + "GreenRect";
         DCID.greenRectangle = ObjectCreate(DCID.chartID, objectName, OBJ_RECTANGLE_LABEL, 0, 0, 0);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrGreen);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_BGCOLOR, clrGreen);
@@ -125,14 +125,14 @@ public:
         long height1 = (DCID.chartHeight - DCID.bidY);
         long height2 = DCID.bidY;
         long y2 = height1;
-        string objectName = _Symbol + "RedRect";
+        string objectName = DCID.symbol + "RedRect";
         int objectID = ObjectFind(DCID.chartID, objectName); // Retrieve the ID of the chart object
         if (objectID != -1)                                  // Check if the object was found
         {
             ObjectSetInteger(DCID.chartID, objectName, OBJPROP_XSIZE, DCID.chartWidth); // Resize the width of the object
             ObjectSetInteger(DCID.chartID, objectName, OBJPROP_YSIZE, height1);         // Resize the height of the object
         }
-        objectName = _Symbol + "GreenRect";
+        objectName = DCID.symbol + "GreenRect";
         objectID = ObjectFind(DCID.chartID, objectName); // Retrieve the ID of the chart object
         if (objectID != -1)                              // Check if the object was found
         {
@@ -145,8 +145,8 @@ public:
     void GetObjectStartBar()
     {
         GetCandleByXY(
-            (int)ObjectGetInteger(DCID.chartID, _Symbol + "RedRect", OBJPROP_XDISTANCE),
-            (int)ObjectGetInteger(DCID.chartID, _Symbol + "RedRect", OBJPROP_YDISTANCE));
+            (int)ObjectGetInteger(DCID.chartID, DCID.symbol + "RedRect", OBJPROP_XDISTANCE),
+            (int)ObjectGetInteger(DCID.chartID, DCID.symbol + "RedRect", OBJPROP_YDISTANCE));
     }
 
     void GetCandleByXY(int x, int y)
@@ -160,7 +160,7 @@ public:
             if (barIndex != -1)
             {
                 MqlRates rates[1];
-                int copied = CopyRates(_Symbol, PERIOD_CURRENT, barIndex, 1, rates);
+                int copied = CopyRates(DCID.symbol, PERIOD_CURRENT, barIndex, 1, rates);
                 if (copied > 0)
                 {
                     DCID.startBar.barIndex = barIndex;
@@ -176,7 +176,7 @@ public:
 
     long getBidY()
     {
-        double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+        double bid = SymbolInfoDouble(DCID.symbol, SYMBOL_BID);
         double chartPriceMin = ChartGetDouble(DCID.chartID, CHART_PRICE_MIN);
         double chartPriceMax = ChartGetDouble(DCID.chartID, CHART_PRICE_MAX);
         long chartYDistance = ChartGetInteger(DCID.chartID, CHART_WINDOW_YDISTANCE);
@@ -199,7 +199,7 @@ public:
 
     void PlotBB()
     {
-        string objectName = "BB-Plot-" + _Symbol + "Start";
+        string objectName = "BB-Plot-" + DCID.symbol + "Start";
         PlaceVerticalLine(DCID.startBar.time, objectName, clrHotPink);
         IdentifySupportResistanceLevels();
     }

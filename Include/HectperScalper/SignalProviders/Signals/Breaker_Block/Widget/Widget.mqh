@@ -2,7 +2,6 @@
 #include "edit.mqh";
 #include "background.mqh";
 #include "bthbit.mqh";
-#include "..\..\..\CustomEvent\BBCustomEvent.mqh";
 //+------------------------------------------------------------------+
 BBWidgetTerminal Terminal;
 //+------------------------------------------------------------------+
@@ -189,8 +188,8 @@ public:
         case Recieve_Ev:
             if (StringSplit(sparam,'#', szRet) == 3)
             {
-                if (szRet[2] == "TID")
-                    EventChartCustom(Terminal.Get_ID(), DataHandshake, Terminal.Get_ID(), 0.0, (string)(szRet[0]+"#"+szRet[1]));
+                // if (szRet[2] == "TID")
+                //     EventChartCustom(Terminal.Get_ID(), DataHandshake, Terminal.Get_ID(), 0.0, (string)(szRet[0]+"#"+szRet[1]));
             }
             break;
 

@@ -14,6 +14,10 @@ class TradeInstance : public Provider
 private:
     ProviderData providerData;
     MainTrader* trader;
+    enum EventCustom
+    {
+        // add custom event here
+    };
 
 public:
     TradeInstance()
@@ -42,6 +46,11 @@ public:
         return trader;
     }
     
+    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
+    {
+        // Widget.DispatchMessage(id, lparam, dparam, sparam);
+    }
+
     void clearBase() override
     {
         delete trader;
