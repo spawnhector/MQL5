@@ -11,8 +11,6 @@
 //| TradeOptimizer description: Check for and optimize open trades   |
 //+------------------------------------------------------------------+
 
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-
 class TradeOptimizer
 {
 protected:

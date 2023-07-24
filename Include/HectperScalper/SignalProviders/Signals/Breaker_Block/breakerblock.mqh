@@ -6,11 +6,6 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include <HectperScalper\SignalProviders\provider.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBTrader.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 
 class BreakerBlock : public Provider
 {
@@ -35,13 +30,14 @@ public:
     ~BreakerBlock()
     {
         delete trader;
-        delete __Interface;
         delete Analyzer;
+        delete __Interface;
     }
 
     void createInterface(string _symb)
     {
-        __Interface = new BBInterface(_symb);
+        __Interface = new BBInterface();
+        __Interface.createInterFace(_symb);
         interfaceData = __Interface.GetInterfaceData();
         if (interfaceData.redRectangle && interfaceData.greenRectangle)
         {
@@ -67,6 +63,19 @@ public:
         return trader;
     }
 
+    D_C *getChartInterface() override
+    {
+        return __Interface.getChartAnalizer();
+    }
+    
+    // void startAnalizer(_Trader &_parent) override{
+    //     __Interface.chartAnalyzer.analyzeChart(_parent);
+    // }
+
+    // void analizeOnTick(_Trader &_parent) override{
+    //     __Interface.chartAnalyzer.analyzeOnTick(_parent);
+    // }
+
     void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
     {
         string szRet[];
@@ -79,7 +88,6 @@ public:
                 {
                     delete __Interface;
                     delete Analyzer;
-                    ChartClose(interfaceData.chartID);
                     createInterface(szRet[1]);
                 }
             }

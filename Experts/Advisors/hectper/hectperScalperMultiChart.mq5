@@ -19,7 +19,15 @@ CPositionInfo m_position; // trade position object
 CTrade m_trade;           // trading object
 
 #include "..\..\..\Include\HectperScalper\SignalProviders\CustomEvent\BBCustomEvent.mqh";
-
+#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
+#include <HectperScalper\SignalProviders\providerData.mqh>;
+#include <HectperScalper\SignalProviders\structs.mqh>;
+#include <HectperScalper\SignalProviders\interfaces.mqh>;
+__Trader *BotSignals[];
+#include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
+#include "..\..\..\Include\HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh";
+#include "..\..\..\Include\HectperScalper\SignalProviders\Signals\Main\Analizers\HSChartAnalizer.mqh";
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
 #include <HectperScalper\AppInterface\CreateSimpleInterface.mqh>;
 #include <HectperScalper\AppInterface\DeleteSimpleInterface.mqh>;
 #include <HectperScalper\AppInterface\ButtonCheck.mqh>;
@@ -42,6 +50,8 @@ CTrade m_trade;           // trading object
 #include <HectperScalper\CustomTicket.mqh>;
 #include <HectperScalper\init\start.mqh>;
 
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBTrader.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 #include <HectperScalper\MultiChart\chart.mqh>;
 int Chart::TCN = 0;
 Chart *Charts[];
@@ -51,13 +61,8 @@ BotInstance *Bots[];
 
 #include <HectperScalper\SignalProviders\signalprovider.mqh>
 SignalProvider *Signals;
+D_C *ChartInterface[];
 
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
-
-
-// #include <HectperScalper\Data\sharedData.mqh>
-
-// DCIDMEMORY dCID;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -99,12 +104,12 @@ void OnDeinit(const int reason)
   DeleteSimpleInterface();
   if (Signals)
     Signals.removeProviders();
-  delete Signals;
+  delete Signals; 
 
   for (int j = 0; j < ArraySize(Charts); j++)
     delete Charts[j];
   for (int j = 0; j < ArraySize(Bots); j++)
-    delete Bots[j];
+    delete Bots[j]; 
   for (int j = 0; j < ArraySize(BotSignals); j++)
     delete BotSignals[j];
 

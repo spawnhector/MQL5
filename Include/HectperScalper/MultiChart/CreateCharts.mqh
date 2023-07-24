@@ -29,7 +29,6 @@
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-// #include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 
 void CreateCharts() // create the chart objects
 {

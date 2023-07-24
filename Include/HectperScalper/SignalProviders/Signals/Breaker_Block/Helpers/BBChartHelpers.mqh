@@ -1,14 +1,9 @@
 #include "Helpers.mqh";
 
-class BBChartHelpers : public Helpers
+class BBChartHelpers : public BBDCHelpers
 {
 public:
     BBChartHelpers(){}
-    
-    DCInterfaceData GetInterfaceData() const override
-    {
-        return DCID;
-    }
 
     
     void IdentifySupportResistanceLevels()
@@ -20,13 +15,15 @@ public:
 
     void CheckPriceBreakOut()
     {
+        Print("bid ",parent.PriceBid);
+        Print("res ",root.ResistanceLevel);
         if (parent.PriceBid < root.SupportLevel) 
         {
-            Print("less than support");
+            Print("less than support ",parent.CurrentSymbol);
         }
         if (parent.PriceBid > root.ResistanceLevel)
         {
-            Print("greater than resistance");
+            Print("greater than resistance ",parent.CurrentSymbol);
         }
     }
 }

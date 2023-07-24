@@ -1,4 +1,13 @@
-#include <HectperScalper\SignalProviders\Struct\startBar.mqh>;
+struct StartBar
+{
+    int barIndex;
+    datetime time;
+    double open;
+    double high;
+    double low;
+    double close;
+};
+
 struct DCInterfaceData
 {
     long chartID;

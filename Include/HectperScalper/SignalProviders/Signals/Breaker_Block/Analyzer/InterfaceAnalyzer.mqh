@@ -7,8 +7,6 @@
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
 
 class AnalyzerInterface
 {

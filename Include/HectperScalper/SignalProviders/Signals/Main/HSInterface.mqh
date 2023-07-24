@@ -7,10 +7,7 @@
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
 #include <ChartObjects\ChartObject.mqh>
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
 #include <HectperScalper\MultiChart\chart.mqh>;
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
-#include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
 
 class HSInterface : public DCInterface
 {
@@ -20,15 +17,22 @@ private:
     DCInterfaceData DCID;
 
 public:
-    HSInterface(_Trader &_parent)
+    HSChartAnalyzer *chartAnalyzer;
+    HSInterface()
     {
-        parent = &_parent;
     }
 
     ~HSInterface()
     {
         delete parent;
         delete dupicateCharts;
+        delete chartAnalyzer;
+    }
+
+    D_C* getChartAnalizer(){
+        delete chartAnalyzer;
+        chartAnalyzer = new HSChartAnalyzer();
+        return chartAnalyzer;
     }
 
     DCInterfaceData GetInterfaceData() const override
@@ -36,6 +40,7 @@ public:
         return DCID;
     }
     
+
     void createDuplicateChart(string symb)
     {
         if (!dupicateCharts)

@@ -1,19 +1,23 @@
 #include "..\Helpers\BBChartHelpers.mqh";
 
-class ChartAnalyzer : public BBChartHelpers
+class BBChartAnalyzer : public BBChartHelpers
 {
 public:
-    ChartAnalyzer(_Trader &_parent) : BBChartHelpers() {parent = _parent;}
-    ~ChartAnalyzer() {}
+    BBChartAnalyzer() : BBChartHelpers() {}
+    ~BBChartAnalyzer() {}
 
-    void analyzeChart()
+    void analyzeChart(_Trader &_parent)
     {
+        parent = _parent;
+        Print("analizing ",_parent.CurrentSymbol);
         root.analyzing = true;
+        root.symbol = _parent.CurrentSymbol;
         IdentifySupportResistanceLevels();
     }
-    
+
     void analyzeOnTick(_Trader &_parent){
         parent = _parent;
-        CheckPriceBreakOut();
+        Print(root.symbol);
+        // if(_parent.CurrentSymbol == root.)CheckPriceBreakOut();
     }
 }

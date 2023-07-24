@@ -6,13 +6,13 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include "Helpers.mqh";
+#include "Helpers.mqh"
 
-class BBInterfaceHelper : public Helpers
+class BBInterfaceHelper : public BBDCInterfaceHelpers
 {
 
 public:
-    BBInterfaceHelper()
+    BBInterfaceHelper() : BBDCInterfaceHelpers()
     {
     }
     

@@ -6,8 +6,6 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
-#include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
 
 class DrawRSLine
 {
@@ -50,19 +48,33 @@ public:
     }
 };
 
-class Helpers : public DCInterface
+
+class BBDCInterfaceHelpers : public DCInterface
 {
 protected:
     DrawRSLine* DrawRSLines;
-    DCInterfaceData DCID;
     _Trader parent;
 
 public:
-    Helpers(){ DrawRSLines = new DrawRSLine();}
-    ~Helpers(){
+    BBDCInterfaceHelpers(){ DrawRSLines = new DrawRSLine();};
+    ~BBDCInterfaceHelpers(){
+        delete DrawRSLines;
+    };
+    DCInterfaceData DCID;
+
+};
+
+class BBDCHelpers : public D_C
+{
+protected:
+    DrawRSLine* DrawRSLines;
+    _Trader parent;
+
+public:
+    BBDCHelpers(){ DrawRSLines = new DrawRSLine();}
+    ~BBDCHelpers(){
         delete DrawRSLines;
     }
-
     struct stc01
     {
         bool analyzing;
@@ -77,8 +89,8 @@ public:
         long y1;
         double SupportLevel;
         double ResistanceLevel;
+        string symbol;
     } root;
 
-private:
 };
 //+------------------------------------------------------------------+

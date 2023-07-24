@@ -1,5 +1,4 @@
 
-#include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
 class TraderFindPeak
 {
 protected:

@@ -3,10 +3,8 @@
 //|                                                                  |
 //+------------------------------------------------------------------+
 
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\SignalProviders\provider.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\HSTrader.mqh>;
-#include <HectperScalper\SignalProviders\traderInterface.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Main\HSInterface.mqh>;
 
 class TradeInstance : public Provider
 {
@@ -20,14 +18,17 @@ private:
     };
 
 public:
+    HSInterface *__Interface;
     TradeInstance()
     {
         providerData.ProviderName = "TradeInstance";
+        __Interface = new HSInterface();
     }
 
     ~TradeInstance()
     {
         delete trader;
+        delete __Interface;
     }
 
     void addIndex(int index) override
@@ -46,6 +47,18 @@ public:
         return trader;
     }
     
+    D_C* getChartInterface() override{
+        return __Interface.getChartAnalizer();
+    }
+
+    // void startAnalizer(_Trader &_parent) override{
+    //     // parent = _parent;
+    // }
+
+    // void analizeOnTick(_Trader &_parent) override{
+    //     // __Interface.chartAnalyzer.analyzeOnTick(_parent);
+    // }
+
     void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
     {
         // Widget.DispatchMessage(id, lparam, dparam, sparam);

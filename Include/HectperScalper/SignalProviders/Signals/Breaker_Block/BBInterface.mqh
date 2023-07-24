@@ -6,27 +6,42 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
+#include "Widget\Widget.mqh"
 #include <ChartObjects\ChartObject.mqh>
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Helpers\BBInterfaceHelper.mqh>;
-#include "Widget\Widget.mqh"
 
 BBWidget Widget;
 
 class BBInterface : public BBInterfaceHelper
 {
+private:
+    BBChartAnalyzer *chartAnalyzer;
+
 public:
-    BBInterface(string _symb) : BBInterfaceHelper()
+    BBInterface() : BBInterfaceHelper()
     {
-        this.createDuplicateChart(_symb);
     }
 
     ~BBInterface()
     {
+        delete chartAnalyzer;
         ChartClose(DCID.chartID);
+    }
+
+    D_C* getChartAnalizer(){
+        delete chartAnalyzer;
+        chartAnalyzer = new BBChartAnalyzer();
+        return chartAnalyzer;
+    }
+
+    void createInterFace(string _symb)
+    {
+        this.createDuplicateChart(_symb);
     }
 
     void createDuplicateChart(string symb)
     {
+        // Print();
         DCID.symbol = symb;
         if (!DCID.chartID)
         {
@@ -47,7 +62,7 @@ public:
 
     void AddVolumeIndicator()
     {
-		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
+        long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
         int volumesIndicatorHandle = iVolumes(DCID.symbol, PERIOD_M1, VOLUME_TICK);
         if (volumesIndicatorHandle != INVALID_HANDLE)
         {
@@ -59,14 +74,17 @@ public:
         }
     }
 
-    void addCustomIndicator(){
-		long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int customIndicator = iCustom(DCID.symbol, PERIOD_M1,"Examples\\InterfacePriceButton");
+    void addCustomIndicator()
+    {
+        long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
+        int customIndicator = iCustom(DCID.symbol, PERIOD_M1, "Examples\\InterfacePriceButton");
         if (customIndicator != INVALID_HANDLE)
         {
-            if (!ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), customIndicator))Print("Failed to attach custom indicator.");
-            else{
-                Widget.Initilize(DCID.chartID,(int)(totalSubwindows),user00, "Widget Price", user03, user04);
+            if (!ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), customIndicator))
+                Print("Failed to attach custom indicator.");
+            else
+            {
+                Widget.Initilize(DCID.chartID, (int)(totalSubwindows), user00, "Widget Price", user03, user04);
                 EventSetMillisecondTimer(10);
             }
         }

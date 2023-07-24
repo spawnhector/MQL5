@@ -26,9 +26,6 @@
 // #import
 //+------------------------------------------------------------------+
 
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh>;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -36,7 +33,6 @@ class BotInstance : public _Trader // separate robot object
 {
 protected:
 public:
-  ChartAnalyzer *chartAnalyzer;
   CPositionInfo m_position;
   CTrade m_trade;
   double CurrentLot;
@@ -48,15 +44,17 @@ public:
   {
     chartindex = _chartindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
-    Optimizer = new TradeOptimizer();
-    chartAnalyzer = new ChartAnalyzer(this);
-    chartAnalyzer.analyzeChart();
+    if (Signals)
+      for (int i = 0; i < ArraySize(Signals.providers); i++)
+      {
+        D_C* chartInter = Signals.providers[i].getChartInterface();
+        chartInter.analyzeChart(this);
+        addChartInterface(chartInter);
+      };
   }
 
   ~BotInstance()
   {
-    delete Optimizer;
-    delete chartAnalyzer;
   }
 
   void InstanceTick()
@@ -74,18 +72,20 @@ public:
           "m1",
           clrGainsboro);
 
-      chartAnalyzer.analyzeOnTick(this);
+      // Print(DCID.symbol);
+
       for (int i = 0; i < ArraySize(BotSignals); i++)
       {
         ProviderData providerStorage = BotSignals[i].GetProviderData();
         int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
         if (isSelected != -1)
         {
+          // Signals.providers[providerStorage.ProviderIndex].analizeOnTick(this);
           BotSignals[i]._Trade(this);
           BotSignals[i].clearBase();
         }
       }
-      Optimizer.checkCloseTrades(this);
+      // Optimizer.checkCloseTrades(this);
     }
   }
 
@@ -109,6 +109,12 @@ private:
         return true;
     }
     return false;
+  }
+  
+  void addChartInterface(D_C &_inter)
+  {
+    ArrayResize(ChartInterface, ArraySize(ChartInterface) + 1);
+    ChartInterface[ArraySize(ChartInterface) - 1] = &_inter;
   }
 };
 //+------------------------------------------------------------------+

@@ -6,11 +6,6 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include <HectperScalper\SignalProviders\provider.mqh>;
-#include <HectperScalper\SignalProviders\traderInterface.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
-#include <HectperScalper\SignalProviders\Struct\interfaceData.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 // #include "breakerblock.mqh";
 

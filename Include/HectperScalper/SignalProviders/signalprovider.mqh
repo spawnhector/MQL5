@@ -7,7 +7,6 @@
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
 
-#include <HectperScalper\SignalProviders\provider.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\TradeInstance.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\breakerblock.mqh>;
 
@@ -35,6 +34,7 @@ public:
         delete Trader;
         delete breakerblock;
     }
+    
     void addProviders(Provider &_providers)
     {
         ArrayResize(providers, ArraySize(providers) + 1);

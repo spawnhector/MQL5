@@ -6,12 +6,7 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
-#include <HectperScalper\SignalProviders\traderInterface.mqh>;
-#include <HectperScalper\SignalProviders\provider.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\PeakInstance.mqh>;
-#include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
-#include <HectperScalper\SignalProviders\duplicatedChartInterface.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\HSInterface.mqh>;
 
 class MainTrader : public __Trader
@@ -21,7 +16,7 @@ protected:
    int bar2;
    TraderFindPeak *PeakFinder;
    ProviderData providerData;
-   HSInterface *__Interface;
+   // HSInterface *__Interface;
 
 public:
    MainTrader(ProviderData &_providerData)
@@ -30,7 +25,7 @@ public:
       //   __Interface = new HSInterface(parent);
    }
    ~MainTrader(){
-      delete __Interface;
+      // delete __Interface;
    }
 
    void _Trade(_Trader &parent)

@@ -30,7 +30,6 @@
 //|                                                                  |
 //+------------------------------------------------------------------+
 
-#include <HectperScalper\SignalProviders\traderInterface.mqh>;
 void CreateInstances() // attach all virtual robots to charts
 {
   if (Signals)
