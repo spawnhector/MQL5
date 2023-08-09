@@ -64,7 +64,7 @@ public:
 
 };
 
-class BBDCHelpers : public D_C
+class BBDCHelpers : public D_c
 {
 protected:
     DrawRSLine* DrawRSLines;
@@ -91,6 +91,7 @@ public:
         double ResistanceLevel;
         string symbol;
     } root;
+    DCInterfaceData DCID;
 
 };
 //+------------------------------------------------------------------+

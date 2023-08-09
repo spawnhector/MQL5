@@ -8,15 +8,30 @@
 #property version "Version = 1.00"
 
 
-class HSDCHelpers : public D_C
+class HSDCHelpers : public D_c
 {
 protected:
     _Trader parent;
 
 public:
-    HSDCHelpers(){ }
+    HSDCHelpers(){ };
     ~HSDCHelpers(){
-    }
+    };
+    DCInterfaceData DCID;
+
+};
+
+class HSDCInterfaceHelpers : public DCInterface
+{
+protected:
+    DrawRSLine* DrawRSLines;
+    _Trader parent;
+
+public:
+    HSDCInterfaceHelpers(){ };
+    ~HSDCInterfaceHelpers(){
+    };
+    DCInterfaceData DCID;
 
 };
 //+------------------------------------------------------------------+

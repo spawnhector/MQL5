@@ -37,8 +37,10 @@ public:
     
     void addProviders(Provider &_providers)
     {
-        ArrayResize(providers, ArraySize(providers) + 1);
-        providers[ArraySize(providers) - 1] = &_providers;
+        // ArrayResize(providers, ArraySize(providers) + 1);
+        // providers[ArraySize(providers) - 1] = &_providers;
+        ArrayResize(_PROVIDERS, ArraySize(_PROVIDERS) + 1);
+        _PROVIDERS[ArraySize(_PROVIDERS) - 1] = &_providers;
     }
 
     void removeProviders(){
@@ -47,7 +49,7 @@ public:
     }
 
     int getIndex(){
-        return ArraySize(providers);
+        return ArraySize(_PROVIDERS);
     }
 };
 

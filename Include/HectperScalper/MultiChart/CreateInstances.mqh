@@ -33,9 +33,9 @@
 void CreateInstances() // attach all virtual robots to charts
 {
   if (Signals)
-    for (int i = 0; i < ArraySize(Signals.providers); i++)
+    for (int i = 0; i < ArraySize(_PROVIDERS); i++)
     {
-      addSignalTrader(Signals.providers[i].GetTrader());
+      addSignalTrader(_PROVIDERS[i].GetTrader());
     };
     
   for (int i = 0; i < ArraySize(S); i++)
@@ -53,6 +53,6 @@ void CreateInstances() // attach all virtual robots to charts
 
 void addSignalTrader(__Trader &_signaltrader)
 {
-  ArrayResize(BotSignals, ArraySize(BotSignals) + 1);
-  BotSignals[ArraySize(BotSignals) - 1] = &_signaltrader;
+  ArrayResize(_TRADERS, ArraySize(_TRADERS) + 1);
+  _TRADERS[ArraySize(_TRADERS) - 1] = &_signaltrader;
 }

@@ -63,9 +63,9 @@ void ButtonsCheck(string sparam0) // check buttons, unpress and close relevant o
     
   }
 
-  for (int i = 0; i < ArraySize(Signals.providers); i++)
+  for (int i = 0; i < ArraySize(_PROVIDERS); i++)
   {
-    ProviderData providerStorage = Signals.providers[i].GetProviderData();
+    ProviderData providerStorage = _PROVIDERS[i].GetProviderData();
     if (sparam0 == "template-Signalprovider-select-button-" + providerStorage.ProviderName)
     {
       int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);

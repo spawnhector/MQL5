@@ -24,4 +24,9 @@ struct DCInterfaceData
     double ResistanceLevel;
     StartBar startBar;
     string symbol;
+} __DCID;
+
+struct ProviderData{
+    int ProviderIndex;
+    string ProviderName;
 };

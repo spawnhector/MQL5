@@ -3,16 +3,20 @@
 class BBChartHelpers : public BBDCHelpers
 {
 public:
-    BBChartHelpers(){}
+    BBChartHelpers(){};
+    ~BBChartHelpers(){};
 
-    
+    DCInterfaceData GetInterfaceData() const override
+    {
+        return DCID;
+    };
+
     void IdentifySupportResistanceLevels()
     {
         DrawRSLines.plot((string)parent.CurrentSymbol, Period());
         root.SupportLevel = DrawRSLines.rangeLow;
         root.ResistanceLevel = DrawRSLines.rangeHigh;
-    }
-
+    };
     void CheckPriceBreakOut()
     {
         Print("bid ",parent.PriceBid);
@@ -25,5 +29,5 @@ public:
         {
             Print("greater than resistance ",parent.CurrentSymbol);
         }
-    }
+    };
 }

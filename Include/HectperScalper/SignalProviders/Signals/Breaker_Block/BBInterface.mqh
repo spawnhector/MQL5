@@ -6,7 +6,7 @@
 #property copyright "Copyright 2023, Ronald hector"
 #property link "https://www.mysite.com/"
 #property version "Version = 1.00"
-#include "Widget\Widget.mqh"
+#include "Widget\Widget.mqh";
 #include <ChartObjects\ChartObject.mqh>
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Helpers\BBInterfaceHelper.mqh>;
 
@@ -14,9 +14,6 @@ BBWidget Widget;
 
 class BBInterface : public BBInterfaceHelper
 {
-private:
-    BBChartAnalyzer *chartAnalyzer;
-
 public:
     BBInterface() : BBInterfaceHelper()
     {
@@ -24,17 +21,14 @@ public:
 
     ~BBInterface()
     {
-        delete chartAnalyzer;
         ChartClose(DCID.chartID);
     }
 
-    D_C* getChartAnalizer(){
-        delete chartAnalyzer;
-        chartAnalyzer = new BBChartAnalyzer();
-        return chartAnalyzer;
+    D_c* getChartAnalizer(){
+        return new BBChartAnalyzer(DCID);
     }
 
-    void createInterFace(string _symb)
+    void createInterFace(string _symb) override
     {
         this.createDuplicateChart(_symb);
     }

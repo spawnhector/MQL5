@@ -8,38 +8,31 @@
 #property version "Version = 1.00"
 #include <ChartObjects\ChartObject.mqh>
 #include <HectperScalper\MultiChart\chart.mqh>;
+#include <HectperScalper\SignalProviders\Signals\Main\Helpers\HSInterfaceHelpers.mqh>;
 
-class HSInterface : public DCInterface
+class HSInterface : public HSInterfaceHelper
 {
 private:
-    _Trader *parent;
     Chart *dupicateCharts;
-    DCInterfaceData DCID;
 
 public:
-    HSChartAnalyzer *chartAnalyzer;
     HSInterface()
     {
     }
 
     ~HSInterface()
     {
-        delete parent;
         delete dupicateCharts;
-        delete chartAnalyzer;
     }
 
-    D_C* getChartAnalizer(){
-        delete chartAnalyzer;
-        chartAnalyzer = new HSChartAnalyzer();
-        return chartAnalyzer;
+    D_c* getChartAnalizer(){
+        return new HSChartAnalyzer(DCID);
     }
 
-    DCInterfaceData GetInterfaceData() const override
+    void createInterFace(string _symb) override
     {
-        return DCID;
+        // this.createDuplicateChart(_symb);
     }
-    
 
     void createDuplicateChart(string symb)
     {

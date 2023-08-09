@@ -346,4 +346,4 @@ public:
         }
         return TrendLinePrice;
     }
-}
+};

@@ -12,13 +12,13 @@ class TradeInstance : public Provider
 private:
     ProviderData providerData;
     MainTrader* trader;
+    HSInterface *__Interface;
     enum EventCustom
     {
         // add custom event here
     };
 
 public:
-    HSInterface *__Interface;
     TradeInstance()
     {
         providerData.ProviderName = "TradeInstance";
@@ -47,8 +47,8 @@ public:
         return trader;
     }
     
-    D_C* getChartInterface() override{
-        return __Interface.getChartAnalizer();
+    DCInterface* getChartInterface() override{
+        return __Interface;
     }
 
     // void startAnalizer(_Trader &_parent) override{
