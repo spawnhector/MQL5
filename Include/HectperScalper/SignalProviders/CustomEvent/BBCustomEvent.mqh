@@ -1,7 +1,9 @@
 enum EventCustom
 {
     Ev_RollingTo,
-    DataHandshake
+    DataHandshake,
+    Rollling_Ev = CHARTEVENT_CUSTOM + Ev_RollingTo,
+    Recieve_Ev = CHARTEVENT_CUSTOM + DataHandshake
 };
 
 enum EventActions

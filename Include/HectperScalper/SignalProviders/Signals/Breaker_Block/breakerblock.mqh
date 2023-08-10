@@ -36,7 +36,7 @@ public:
 
     void createInterface(string _symb)
     {
-        _interface = new BBInterface();
+        _interface = new BBInterface(providerData);
         _interface.createInterFace(_symb);
         interfaceData = _interface.GetInterfaceData();
         if (interfaceData.redRectangle && interfaceData.greenRectangle)
@@ -68,7 +68,7 @@ public:
         return _interface;
     }
 
-    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
+    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam) override
     {
         string szRet[];
         switch (id)
@@ -80,6 +80,7 @@ public:
                 {
                     delete _interface;
                     delete Analyzer;
+                    ObjectsDeleteAll(interfaceData.chartID,"BB-Plot");
                     createInterface(szRet[1]);
                 }
             }

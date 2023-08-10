@@ -98,7 +98,7 @@ void OnTimer()
     EventKillTimer();
     return;
   }
-  EventChartCustom(0, Ev_RollingTo, user01, 0.0, "");
+  EventChartCustom(0, Ev_RollingTo, user01, 0.0, ""); 
 
   if (enableServer)
   {
@@ -125,7 +125,6 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-
   if (id == CHARTEVENT_OBJECT_CLICK)
   {
     ButtonsCheck(sparam);

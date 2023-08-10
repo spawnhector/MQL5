@@ -17,7 +17,7 @@ protected:
     BreakerBlock *breakerblock;
 
 public:
-    Provider *providers[];
+    // Provider *providers[];
 
     SignalProvider()
     {

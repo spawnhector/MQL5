@@ -16,8 +16,9 @@ private:
     Chart *dupicateCharts;
 
 public:
-    HSInterface()
+    HSInterface(ProviderData &_providerData)
     {
+        providerData = _providerData;
     }
 
     ~HSInterface()
@@ -26,7 +27,7 @@ public:
     }
 
     D_c* getChartAnalizer(){
-        return new HSChartAnalyzer(DCID);
+        return new HSChartAnalyzer(providerData, DCID);
     }
 
     void createInterFace(string _symb) override

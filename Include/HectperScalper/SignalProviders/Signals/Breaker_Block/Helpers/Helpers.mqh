@@ -60,6 +60,7 @@ public:
     ~BBDCInterfaceHelpers(){
         delete DrawRSLines;
     };
+    ProviderData providerData;
     DCInterfaceData DCID;
 
 };
@@ -71,26 +72,12 @@ protected:
     _Trader parent;
 
 public:
-    BBDCHelpers(){ DrawRSLines = new DrawRSLine();}
+    BBDCHelpers(){ DrawRSLines = new DrawRSLine();};
     ~BBDCHelpers(){
         delete DrawRSLines;
-    }
-    struct stc01
-    {
-        bool analyzing;
-        bool redRectangle;
-        bool greenRectangle;
-        long chartWidth;
-        long chartHeight;
-        long bidY;
-        long onew;
-        long twow;
-        long x1;
-        long y1;
-        double SupportLevel;
-        double ResistanceLevel;
-        string symbol;
-    } root;
+    };
+    stc01 ROOT;
+    ProviderData providerData;
     DCInterfaceData DCID;
 
 };

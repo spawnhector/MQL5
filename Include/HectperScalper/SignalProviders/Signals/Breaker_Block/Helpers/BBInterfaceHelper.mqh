@@ -23,14 +23,31 @@ public:
     
     void IdentifySupportResistanceLevels()
     {
-        DrawRSLines.plot(DCID.symbol, Period());
-        DCID.SupportLevel = DrawRSLines.rangeLow;
-        DCID.ResistanceLevel = DrawRSLines.rangeHigh;
-        string objectName = "BB-Plot-"+_Symbol+"-SupportLevel";
-        ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DrawRSLines.rangeTime, DrawRSLines.rangeLow);
+        bool updated = 0;
+        for (int i = 0; i < ArraySize(_DCS); i++)
+        {   __root = _DCS[i].GetRootData();
+            __providerData = _DCS[i].GetProviderData();
+            if (__providerData.ProviderName == providerData.ProviderName)
+                if (__root.symbol == DCID.symbol)
+                {
+                    DCID.SupportLevel = __root.SupportLevel;
+                    DCID.ResistanceLevel = __root.ResistanceLevel;
+                    DCID.rangeTime = __root.rangeTime;
+                    updated = 1;
+                }
+        };
+        if (!updated)
+        {
+            DrawRSLines.plot(DCID.symbol, Period());
+            DCID.SupportLevel = DrawRSLines.rangeLow;
+            DCID.ResistanceLevel = DrawRSLines.rangeHigh;
+            DCID.rangeTime = DrawRSLines.rangeTime;
+        }
+        string objectName = "BB-Plot-"+DCID.symbol+"-SupportLevel";
+        ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DCID.rangeTime, DCID.SupportLevel);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
-        objectName = "BB-Plot-"+_Symbol+"-ResistanceLevel";
-        ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DrawRSLines.rangeTime, DrawRSLines.rangeHigh);
+        objectName = "BB-Plot-"+DCID.symbol+"-ResistanceLevel";
+        ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DCID.rangeTime, DCID.ResistanceLevel);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
     }
 

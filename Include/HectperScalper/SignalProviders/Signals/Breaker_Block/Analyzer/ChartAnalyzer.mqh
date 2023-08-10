@@ -3,25 +3,23 @@
 class BBChartAnalyzer : public BBChartHelpers
 {
 public:
-    BBChartAnalyzer(DCInterfaceData &_DCID) : BBChartHelpers() {DCID = _DCID;};
+    BBChartAnalyzer(ProviderData &_providerData, DCInterfaceData &_DCID) : BBChartHelpers() {
+        DCID = _DCID;
+        providerData = _providerData;
+    };
     ~BBChartAnalyzer() {};
 
     void analyzeChart(_Trader &_parent) override
     {
         parent = _parent;
-        Print("analizing BB ",_parent.CurrentSymbol);
-        root.analyzing = true;
-        root.symbol = _parent.CurrentSymbol;
+        ROOT.analyzing = true;
+        ROOT.symbol = _parent.CurrentSymbol;
         IdentifySupportResistanceLevels();
     };
 
     void OnTick(_Trader &_parent) override{
         parent = _parent;
-        Print("ontick BB ",DCID.symbol);
-        // if(_parent.CurrentSymbol == root.)CheckPriceBreakOut();
+        CheckPriceBreakOut();
     };
 
-    virtual void setDCIDSymbol(string _sym) override {
-        DCID.symbol = _sym;
-    };
 };

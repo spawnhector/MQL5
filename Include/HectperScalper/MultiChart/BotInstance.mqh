@@ -28,7 +28,6 @@ public:
       {
         _INTERFACE = _PROVIDERS[i].getChartInterface();
         _DC = _INTERFACE.getChartAnalizer();
-        _DC.setDCIDSymbol(CurrentSymbol);
         _DC.analyzeChart(this);
         this.addChartAnalizer();
       };
@@ -55,9 +54,8 @@ public:
           clrGainsboro);
       for (int i = 0; i < ArraySize(_DCS); i++)
       {
-        __DCID = _DCS[i].GetInterfaceData();
-        if(__DCID.symbol == CurrentSymbol) _DCS[i].OnTick(this);
-        // _DCS[i].OnTick(this);
+        __root = _DCS[i].GetRootData();
+        if(__root.symbol == CurrentSymbol) _DCS[i].OnTick(this);
       };
       // // for (int i = 0; i < ArraySize(BotSignals); i++)
       // {

@@ -13,12 +13,6 @@ BBWidgetTerminal Terminal;
 
 class BBWidget
 {
-protected:
-    enum EventCustom
-    {
-        Rollling_Ev = CHARTEVENT_CUSTOM + Ev_RollingTo,
-        Recieve_Ev = CHARTEVENT_CUSTOM + DataHandshake
-    };
 
 private:
     enum EnumTypeObject

@@ -22,7 +22,7 @@ public:
     TradeInstance()
     {
         providerData.ProviderName = "TradeInstance";
-        __Interface = new HSInterface();
+        __Interface = new HSInterface(providerData);
     }
 
     ~TradeInstance()
@@ -59,7 +59,7 @@ public:
     //     // __Interface.chartAnalyzer.analyzeOnTick(_parent);
     // }
 
-    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
+    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam) override
     {
         // Widget.DispatchMessage(id, lparam, dparam, sparam);
     }

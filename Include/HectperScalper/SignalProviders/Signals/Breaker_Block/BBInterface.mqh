@@ -15,8 +15,9 @@ BBWidget Widget;
 class BBInterface : public BBInterfaceHelper
 {
 public:
-    BBInterface() : BBInterfaceHelper()
+    BBInterface(ProviderData &_providerData) : BBInterfaceHelper()
     {
+        providerData = _providerData;
     }
 
     ~BBInterface()
@@ -24,8 +25,9 @@ public:
         ChartClose(DCID.chartID);
     }
 
-    D_c* getChartAnalizer(){
-        return new BBChartAnalyzer(DCID);
+    D_c *getChartAnalizer()
+    {
+        return new BBChartAnalyzer(providerData, DCID);
     }
 
     void createInterFace(string _symb) override
@@ -35,7 +37,6 @@ public:
 
     void createDuplicateChart(string symb)
     {
-        // Print();
         DCID.symbol = symb;
         if (!DCID.chartID)
         {

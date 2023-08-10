@@ -17,6 +17,8 @@ public:
     HSDCHelpers(){ };
     ~HSDCHelpers(){
     };
+    stc01 ROOT;
+    ProviderData providerData;
     DCInterfaceData DCID;
 
 };
@@ -31,6 +33,7 @@ public:
     HSDCInterfaceHelpers(){ };
     ~HSDCInterfaceHelpers(){
     };
+    ProviderData providerData;
     DCInterfaceData DCID;
 
 };

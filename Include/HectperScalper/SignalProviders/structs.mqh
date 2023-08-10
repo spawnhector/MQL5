@@ -22,11 +22,31 @@ struct DCInterfaceData
     long y1;
     double SupportLevel;
     double ResistanceLevel;
+    datetime rangeTime;
     StartBar startBar;
     string symbol;
 } __DCID;
 
-struct ProviderData{
+struct ProviderData
+{
     int ProviderIndex;
     string ProviderName;
-};
+} __providerData;
+
+struct stc01
+{
+    bool analyzing;
+    bool redRectangle;
+    bool greenRectangle;
+    long chartWidth;
+    long chartHeight;
+    long bidY;
+    long onew;
+    long twow;
+    long x1;
+    long y1;
+    double SupportLevel;
+    double ResistanceLevel;
+    datetime rangeTime;
+    string symbol;
+} __root;
