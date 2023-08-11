@@ -11,7 +11,6 @@ class BreakerBlock : public Provider
 {
 private:
     ProviderData providerData;
-    BBTrader *trader;
     BBInterface *_interface;
     BBAnalyzer *Analyzer;
     DCInterfaceData interfaceData;
@@ -29,7 +28,6 @@ public:
 
     ~BreakerBlock()
     {
-        delete trader;
         delete Analyzer;
         delete _interface;
     }
@@ -57,12 +55,6 @@ public:
         return providerData;
     }
 
-    __Trader *GetTrader() override
-    {
-        trader = new BBTrader(providerData);
-        return trader;
-    }
-
     DCInterface *getChartInterface() override
     {
         return _interface;
@@ -86,11 +78,10 @@ public:
             }
             break;
         }
-        trader.DispatchMessage(id, lparam, dparam, sparam);
+        Widget.DispatchMessage(id, lparam, dparam, sparam);
     }
     void clearBase() override
     {
-        delete trader;
     }
 };
 

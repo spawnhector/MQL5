@@ -16,11 +16,11 @@ public:
         ROOT.symbol = _parent.CurrentSymbol;
         IdentifySupportResistanceLevels();
     };
-
+    
     void OnTick(_Trader &_parent) override{
         parent = _parent;
         CheckPriceBreakOut();
-        if (ROOT.rereverseBreakoutFound) Print();
+        if (ROOT.reverseBreakoutFound) parent._Trade(ROOT);
     };
 
 };

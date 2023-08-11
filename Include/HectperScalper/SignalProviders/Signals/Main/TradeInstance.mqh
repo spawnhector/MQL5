@@ -3,7 +3,6 @@
 //|                                                                  |
 //+------------------------------------------------------------------+
 
-#include <HectperScalper\SignalProviders\Signals\Main\HSTrader.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Main\HSInterface.mqh>;
 
 class TradeInstance : public Provider
@@ -11,7 +10,6 @@ class TradeInstance : public Provider
 
 private:
     ProviderData providerData;
-    MainTrader* trader;
     HSInterface *__Interface;
     enum EventCustom
     {
@@ -27,7 +25,6 @@ public:
 
     ~TradeInstance()
     {
-        delete trader;
         delete __Interface;
     }
 
@@ -39,12 +36,6 @@ public:
     ProviderData GetProviderData() const override
     {
         return providerData;
-    }
-
-    __Trader* GetTrader() override
-    {
-        trader = new MainTrader(providerData);
-        return trader;
     }
     
     DCInterface* getChartInterface() override{
@@ -66,6 +57,5 @@ public:
 
     void clearBase() override
     {
-        delete trader;
     }
 }

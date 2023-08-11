@@ -55,7 +55,7 @@ public:
           __root = _DCS[i].GetRootData();
           if (__root.symbol == CurrentSymbol)
             _DCS[i].OnTick(this);
-        };
+        }
         // // for (int i = 0; i < ArraySize(BotSignals); i++)
         // {
         //   ProviderData providerStorage = BotSignals[i].GetProviderData();

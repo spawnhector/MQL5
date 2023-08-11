@@ -50,7 +50,6 @@ public:
                 DrawRectangles();
                 AddVolumeIndicator();
                 addCustomIndicator();
-                // ChartRedraw(DCID.chartID);
             }
         }
     }

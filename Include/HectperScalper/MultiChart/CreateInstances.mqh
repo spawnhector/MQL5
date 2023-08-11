@@ -32,11 +32,6 @@
 
 void CreateInstances() // attach all virtual robots to charts
 {
-  if (Signals)
-    for (int i = 0; i < ArraySize(_PROVIDERS); i++)
-    {
-      addSignalTrader(_PROVIDERS[i].GetTrader());
-    };
     
   for (int i = 0; i < ArraySize(S); i++)
   {

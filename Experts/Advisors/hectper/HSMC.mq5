@@ -119,7 +119,6 @@ void OnTimer()
   }
 }
 
-// bool bInterfaceE = true; // Interface
 void OnChartEvent(const int id,
                   const long &lparam,
                   const double &dparam,

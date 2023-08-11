@@ -30,7 +30,6 @@ class Provider
 {
 public:
     virtual ProviderData GetProviderData() const = 0;
-    virtual __Trader *GetTrader() { return _TRADER; };
     virtual DCInterface *getChartInterface() { return _INTERFACE; };
     virtual void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam){};
     virtual void addIndex(int index){};

@@ -1,7 +1,8 @@
 
 #include "..\..\..\..\..\Include\HectperScalper\SignalProviders\CustomEvent\BBCustomEvent.mqh";
-#include <HectperScalper\SignalProviders\Signals\Main\Trader.mqh>;
+#include <HectperScalper\SignalProviders\enums.mqh>;
 #include <HectperScalper\SignalProviders\structs.mqh>;
+#include <HectperScalper\SignalProviders\Trader.mqh>;
 #include <HectperScalper\SignalProviders\interfaces.mqh>;
 #include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
 #include "..\..\..\..\..\Include\HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh";
@@ -28,7 +29,6 @@
 #include <HectperScalper\customChatObjects.mqh>;
 #include <HectperScalper\CustomTicket.mqh>;
 #include <HectperScalper\init\start.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBTrader.mqh>;
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 #include <HectperScalper\MultiChart\chart.mqh>;
 #include <HectperScalper\MultiChart\BotInstance.mqh>;

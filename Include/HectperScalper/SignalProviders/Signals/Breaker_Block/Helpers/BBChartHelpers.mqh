@@ -31,48 +31,63 @@ public:
     void CheckPriceBreakOut()
     {
         if (parent.PriceBid < ROOT.SupportLevel)
-            this.checkVolume(1, true);
+            this.checkVolume(SUPPORTLINE, true);
         if (ROOT.SupportLevelPassed && parent.PriceBid > ROOT.SupportLevel)
-            this.unCheckVolume(1, false);
+            this.unCheckVolume(SUPPORTLINE, false);
         if (parent.PriceBid > ROOT.ResistanceLevel)
-            this.checkVolume(2, true);
+            this.checkVolume(RESISTANCELINE, true);
         if (ROOT.ResistanceLevelPassed && parent.PriceBid < ROOT.ResistanceLevel)
-            this.unCheckVolume(2, false);
+            this.unCheckVolume(RESISTANCELINE, false);
     };
 
-    void switchLevelType(int levelType, bool typeVal) // level type: 1 support(low), 2 resistance(high)
+    void switchLevelType(int levelType, bool typeVal) // level type: SUPPORTLINE support(low), RESISTANCELINE resistance(high)
     {
         switch (levelType)
         {
-        case 1:
+        case SUPPORTLINE:
             ROOT.SupportLevelPassed = typeVal;
             break;
-        case 2:
+        case RESISTANCELINE:
             ROOT.ResistanceLevelPassed = typeVal;
             break;
         }
     };
 
+    void switchTradeType(int levelType){
+        switch (levelType)
+            {
+            case SUPPORTLINE:
+                ROOT.tradeType = SELL;
+                break;
+            case RESISTANCELINE:
+                ROOT.tradeType = BUY;
+                break;
+            }
+    };
+
     void isBOFound(int levelType){
         switch (levelType)
         {
-        case 1:
+        case SUPPORTLINE:
             ROOT.breakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
             break;
-        case 2:
+        case RESISTANCELINE:
+            ROOT.breakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
             break;
         }
     };
-    
+
     void isRBOFound(int levelType){
         switch (levelType)
         {
-        case 1:
+        case SUPPORTLINE:
             ROOT.reverseBreakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
             break;
-        case 2:
+        case RESISTANCELINE:
+            ROOT.reverseBreakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
             break;
         }
+        if(ROOT.reverseBreakoutFound) this.switchTradeType(levelType);
     };
 
     void checkVolume(int levelType, bool typeVal)

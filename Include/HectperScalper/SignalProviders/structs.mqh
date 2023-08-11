@@ -57,5 +57,5 @@ struct stc01
     long BBOBVolume;
     bool breakoutFound;
     bool reverseBreakoutFound;
-    string tradeType;
+    int tradeType;
 } __root;

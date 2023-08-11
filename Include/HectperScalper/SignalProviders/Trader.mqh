@@ -333,4 +333,13 @@ public:
         }
         return TrendLinePrice;
     }
+    void _Trade(stc01 &chartData){
+        Print(chartData.tradeType);
+        // if (m_trade.Buy(CorrectedLot, parent.GetCurrentSymbol(), buyprice, sl, tp, NULL))
+        // {
+        //     ulong Ticket = m_trade.ResultOrder();
+        //     order_magic = order_magic + 1;
+        // }
+    };
+
 };
