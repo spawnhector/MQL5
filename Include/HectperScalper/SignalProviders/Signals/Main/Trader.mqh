@@ -13,6 +13,8 @@ public:
     string timeframe;
     int clr;
     int size;
+    int currentBar;
+    int previousBar;
     double openOrders[];
     double cls[];
     double openBuyOrder[];
@@ -35,14 +37,7 @@ public:
     }
 
     virtual void _SetState(
-        int _MagicF,
-        int _index,
-        double _PriceBid,
-        double _PriceAsk,
-        string _CurrentSymbol,
-        int _shoulder,
-        string _timeframe,
-        int _clr)
+    )
     {
         if (ArraySize(prevFoundHigh) > MAX_CANDELS)
         {
@@ -58,14 +53,6 @@ public:
         {
             ObjectsDeleteAll(0, 0, -1);
         }
-        this.MagicF = _MagicF;
-        this.index = _index;
-        this.PriceBid = _PriceBid;
-        this.PriceAsk = _PriceAsk;
-        this.CurrentSymbol = _CurrentSymbol;
-        this.shoulder = _shoulder;
-        this.timeframe = _timeframe;
-        this.clr = _clr;
     }
 
     virtual int GetMagicF()

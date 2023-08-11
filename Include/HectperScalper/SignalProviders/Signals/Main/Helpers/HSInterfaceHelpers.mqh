@@ -14,12 +14,12 @@ class HSInterfaceHelper : public HSDCInterfaceHelpers
 public:
     HSInterfaceHelper() : HSDCInterfaceHelpers()
     {
-    }
+    };
     
     DCInterfaceData GetInterfaceData() const override
     {
         return DCID;
-    }
+    };
 
 };
 //+------------------------------------------------------------------+

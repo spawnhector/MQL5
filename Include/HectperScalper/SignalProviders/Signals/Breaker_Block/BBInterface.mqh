@@ -58,10 +58,10 @@ public:
     void AddVolumeIndicator()
     {
         long totalSubwindows = ChartGetInteger(DCID.chartID, CHART_WINDOWS_TOTAL);
-        int volumesIndicatorHandle = iVolumes(DCID.symbol, PERIOD_M1, VOLUME_TICK);
-        if (volumesIndicatorHandle != INVALID_HANDLE)
+        DCID.volumesIndicatorHandle = iVolumes(DCID.symbol, PERIOD_M1, VOLUME_TICK);
+        if (DCID.volumesIndicatorHandle != INVALID_HANDLE)
         {
-            ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), volumesIndicatorHandle);
+            ChartIndicatorAdd(DCID.chartID, (int)(totalSubwindows), DCID.volumesIndicatorHandle);
         }
         else
         {

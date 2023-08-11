@@ -24,7 +24,8 @@ public:
       providerData = _providerData;
       //   __Interface = new HSInterface(parent);
    }
-   ~MainTrader(){
+   ~MainTrader()
+   {
       // delete __Interface;
    }
 
@@ -33,21 +34,17 @@ public:
       PeakFinder = new TraderFindPeak();
       // CreateHighLow(parent);
    }
-   
-    ProviderData GetProviderData() const override
-    {
-        return providerData;
-    }
 
-   //  DCInterface* GetDCInterface() override
-   //  {
-   //      return __Interface;
-   //  }
+   ProviderData GetProviderData() const override
+   {
+      return providerData;
+   }
 
-    void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam){
+   void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam)
+   {
       //   Print("dispatch");
-    }
-    
+   }
+
    void clearBase() override
    {
       delete PeakFinder;

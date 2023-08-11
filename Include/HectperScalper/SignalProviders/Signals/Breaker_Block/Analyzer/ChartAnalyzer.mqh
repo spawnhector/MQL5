@@ -20,6 +20,7 @@ public:
     void OnTick(_Trader &_parent) override{
         parent = _parent;
         CheckPriceBreakOut();
+        if (ROOT.rereverseBreakoutFound) Print();
     };
 
 };

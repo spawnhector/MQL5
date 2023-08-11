@@ -22,6 +22,7 @@ struct DCInterfaceData
     long y1;
     double SupportLevel;
     double ResistanceLevel;
+    int volumesIndicatorHandle;
     datetime rangeTime;
     StartBar startBar;
     string symbol;
@@ -49,4 +50,12 @@ struct stc01
     double ResistanceLevel;
     datetime rangeTime;
     string symbol;
+    bool volumeChecked;
+    bool SupportLevelPassed;
+    bool ResistanceLevelPassed;
+    long BOBVolume;
+    long BBOBVolume;
+    bool breakoutFound;
+    bool reverseBreakoutFound;
+    string tradeType;
 } __root;

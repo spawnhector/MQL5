@@ -33,46 +33,64 @@ public:
       };
   };
 
-  ~BotInstance()
-  {
-  };
+  ~BotInstance(){};
 
   void InstanceTick()
   {
     MagicF = order_magic;
+    index = chartindex;
+    PriceBid = Charts[chartindex].ChartBid;
+    PriceAsk = Charts[chartindex].ChartAsk;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
-    if (strat_trade)
-    {
-      _SetState(
-          MagicF,
-          chartindex,
-          Charts[chartindex].ChartBid,
-          Charts[chartindex].ChartAsk,
-          CurrentSymbol,
-          MAX_CANDELS * 2,
-          "m1",
-          clrGainsboro);
-      for (int i = 0; i < ArraySize(_DCS); i++)
+    shoulder = MAX_CANDELS * 2;
+    timeframe = "m1";
+    clr = clrGainsboro;
+    currentBar = iBarShift(CurrentSymbol, PERIOD_M1, TimeCurrent());
+    previousBar = currentBar +1;
+    if (strat_trade && bNewBar())
       {
-        __root = _DCS[i].GetRootData();
-        if(__root.symbol == CurrentSymbol) _DCS[i].OnTick(this);
-      };
-      // // for (int i = 0; i < ArraySize(BotSignals); i++)
-      // {
-      //   ProviderData providerStorage = BotSignals[i].GetProviderData();
-      //   int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
-      //   if (isSelected != -1)
-      //   {
-      //     // Signals.providers[providerStorage.ProviderIndex].analizeOnTick(this);
-      //     BotSignals[i]._Trade(this);
-      //     BotSignals[i].clearBase();
-      //   }
-      // }
-      // Optimizer.checkCloseTrades(this);
-    }
+        _SetState();
+        for (int i = 0; i < ArraySize(_DCS); i++)
+        {
+          __root = _DCS[i].GetRootData();
+          if (__root.symbol == CurrentSymbol)
+            _DCS[i].OnTick(this);
+        };
+        // // for (int i = 0; i < ArraySize(BotSignals); i++)
+        // {
+        //   ProviderData providerStorage = BotSignals[i].GetProviderData();
+        //   int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
+        //   if (isSelected != -1)
+        //   {
+        //     // Signals.providers[providerStorage.ProviderIndex].analizeOnTick(this);
+        //     BotSignals[i]._Trade(this);
+        //     BotSignals[i].clearBase();
+        //   }
+        // }
+        // Optimizer.checkCloseTrades(this);
+      }
   };
 
 private:
+  datetime Time0;
+  bool bNewBar() // new bar
+  {
+    if (Time0 < Charts[chartindex].TimeI[1] && Charts[chartindex].ChartPoint != 0.0)
+    {
+      if (Time0 != 0)
+      {
+        Time0 = Charts[chartindex].TimeI[1];
+        return true;
+      }
+      else
+      {
+        Time0 = Charts[chartindex].TimeI[1];
+        return false;
+      }
+    }
+    else
+      return false;
+  }
   bool bOurMagic(ulong ticket, int magiccount) // whether the magic number of the current deal matches one of the possible magic numbers of our robot
   {
     int MagicT[];
@@ -88,7 +106,7 @@ private:
     }
     return false;
   };
-  
+
   void addChartAnalizer()
   {
     ArrayResize(_DCS, ArraySize(_DCS) + 1);

@@ -19,21 +19,21 @@ public:
     HSInterface(ProviderData &_providerData)
     {
         providerData = _providerData;
-    }
+    };
 
     ~HSInterface()
     {
         delete dupicateCharts;
-    }
+    };
 
     D_c* getChartAnalizer(){
         return new HSChartAnalyzer(providerData, DCID);
-    }
+    };
 
     void createInterFace(string _symb) override
     {
         // this.createDuplicateChart(_symb);
-    }
+    };
 
     void createDuplicateChart(string symb)
     {
@@ -51,7 +51,7 @@ public:
             dupicateCharts.CurrentSymbol = "EURUSD";          // Set the symbol for the chart
             dupicateCharts.Timeframe = PERIOD_H1;             // Set the timeframe for the chart
         }
-    }
+    };
 
     void DrawRectangles()
     {
@@ -97,7 +97,7 @@ public:
         ObjectSetInteger(parent.index, "GreenRect", OBJPROP_BACK, true);
         ObjectSetInteger(parent.index, "GreenRect", OBJPROP_SELECTABLE, false);
         ObjectSetInteger(parent.index, "GreenRect", OBJPROP_SELECTED, false);
-    }
+    };
 
     long getBidY()
     {
@@ -105,12 +105,12 @@ public:
         double chartPriceMax = ChartGetDouble(0, CHART_PRICE_MAX);
         long chartYDistance = ChartGetInteger(0, CHART_WINDOW_YDISTANCE);
         long chartHeight = ChartGetInteger(0, CHART_HEIGHT_IN_PIXELS);
-
         return chartYDistance + (long)((parent.PriceBid - chartPriceMin) / (chartPriceMax - chartPriceMin) * chartHeight);
-    }
+    };
+
     void clearBase()
     {
         // delete parent;
-    }
+    };
 };
 //+------------------------------------------------------------------+

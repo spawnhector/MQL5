@@ -9,15 +9,15 @@ public:
     stc01 GetRootData() const override
     {
         return ROOT;
-    }
+    };
 
     DCInterfaceData GetInterfaceData() const override
     {
         return DCID;
-    }
+    };
     
     ProviderData GetProviderData() const override
     {
         return providerData;
-    }
+    };
 }

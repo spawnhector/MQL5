@@ -20,18 +20,18 @@ public:
     {
         tradeInterface = &bbInterface;
         interfaceData = tradeInterface.GetInterfaceData();
-    }
+    };
 
     void onTick(_Trader &_parent)
     {
         parent = &_parent;
         analyzeMarketTick();
-    }
+    };
 
     void analyzeMarketTick()
     {
         checkPriceBreakOut();
-    }
+    };
 
     void checkPriceBreakOut()
     {
@@ -43,6 +43,6 @@ public:
         {
             Print("greater than resistance");
         }
-    }
+    };
 };
 //+------------------------------------------------------------------+
