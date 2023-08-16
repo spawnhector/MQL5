@@ -19,7 +19,6 @@ public:
     };
     stc01 ROOT;
     ProviderData providerData;
-    DCInterfaceData DCID;
 
 };
 
@@ -34,7 +33,6 @@ public:
     ~HSDCInterfaceHelpers(){
     };
     ProviderData providerData;
-    DCInterfaceData DCID;
 
 };
 //+------------------------------------------------------------------+

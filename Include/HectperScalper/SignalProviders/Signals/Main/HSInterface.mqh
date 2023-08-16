@@ -27,7 +27,7 @@ public:
     };
 
     D_c* getChartAnalizer(){
-        return new HSChartAnalyzer(providerData, DCID);
+        return new HSChartAnalyzer(providerData);
     };
 
     void createInterFace(string _symb) override

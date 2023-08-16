@@ -32,22 +32,19 @@
 
 void CreateInstances() // attach all virtual robots to charts
 {
-    
-  for (int i = 0; i < ArraySize(S); i++)
-  {
+  
     for (int j = 0; j < ArraySize(Charts); j++)
     {
-      if (Charts[j].CurrentSymbol == S[i])
+      int _index = __chartSymbol.symbolIndex(Charts[j].CurrentSymbol);
+      if (_index != -1)
       {
-        Bots[i] = new BotInstance(i, j);
-        break;
+        Bots[_index] = new BotInstance(_index);
       }
     }
-  }
-}
+};
 
 void addSignalTrader(__Trader &_signaltrader)
 {
   ArrayResize(_TRADERS, ArraySize(_TRADERS) + 1);
   _TRADERS[ArraySize(_TRADERS) - 1] = &_signaltrader;
-}
+};

@@ -61,7 +61,6 @@ public:
         delete DrawRSLines;
     };
     ProviderData providerData;
-    DCInterfaceData DCID;
 
 };
 
@@ -78,7 +77,11 @@ public:
     };
     stc01 ROOT;
     ProviderData providerData;
-    DCInterfaceData DCID;
+
+    void addRootObject(chartObjects &cob){
+        ArrayResize(ROOT.__COBS, ArraySize(ROOT.__COBS) + 1);
+        ROOT.__COBS[ArraySize(ROOT.__COBS) - 1] = cob;
+    };
 
 };
 //+------------------------------------------------------------------+

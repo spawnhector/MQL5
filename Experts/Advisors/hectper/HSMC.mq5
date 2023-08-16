@@ -12,7 +12,6 @@
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 
-
 #include <Trade\PositionInfo.mqh>
 #include <Trade\Trade.mqh>
 CPositionInfo m_position; // trade position object
@@ -35,6 +34,7 @@ int OnInit()
     Print("Automated trading is currently disabled. Please enable automated trading to use this Expert Advisor.");
     return INIT_FAILED;
   }
+  
 
   if (isTestAccount)
   {

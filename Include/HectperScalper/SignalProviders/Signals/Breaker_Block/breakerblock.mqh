@@ -12,7 +12,6 @@ class BreakerBlock : public Provider
 private:
     ProviderData providerData;
     BBInterface *_interface;
-    BBAnalyzer *Analyzer;
     DCInterfaceData interfaceData;
     enum EventCustom
     {
@@ -28,7 +27,6 @@ public:
 
     ~BreakerBlock()
     {
-        delete Analyzer;
         delete _interface;
     }
 
@@ -37,12 +35,11 @@ public:
         _interface = new BBInterface(providerData);
         _interface.createInterFace(_symb);
         interfaceData = _interface.GetInterfaceData();
-        if (interfaceData.redRectangle && interfaceData.greenRectangle)
-        {
-            _interface.GetObjectStartBar();
-            _interface.PlotBB();
-            Analyzer = new BBAnalyzer(_interface);
-        }
+        _interface.PlotBB();
+        // if (interfaceData.redRectangle && interfaceData.greenRectangle)
+        // {
+        //     // _interface.GetObjectStartBar();
+        // }
     }
 
     void addIndex(int index) override
@@ -71,7 +68,6 @@ public:
                 if (szRet[0] == "CHARTCHANGE")
                 {
                     delete _interface;
-                    delete Analyzer;
                     ObjectsDeleteAll(interfaceData.chartID,"BB-Plot");
                     createInterface(szRet[1]);
                 }

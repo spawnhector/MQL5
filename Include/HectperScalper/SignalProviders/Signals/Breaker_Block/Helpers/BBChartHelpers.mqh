@@ -3,6 +3,8 @@
 class BBChartHelpers : public BBDCHelpers
 {
 public:
+    double startPrice;
+    double endPrice;
     BBChartHelpers(){};
     ~BBChartHelpers(){};
 
@@ -53,19 +55,21 @@ public:
         }
     };
 
-    void switchTradeType(int levelType){
+    void switchTradeType(int levelType)
+    {
         switch (levelType)
-            {
-            case SUPPORTLINE:
-                ROOT.tradeType = SELL;
-                break;
-            case RESISTANCELINE:
-                ROOT.tradeType = BUY;
-                break;
-            }
+        {
+        case SUPPORTLINE:
+            ROOT.tradeType = SELL;
+            break;
+        case RESISTANCELINE:
+            ROOT.tradeType = BUY;
+            break;
+        }
     };
 
-    void isBOFound(int levelType){
+    void isBOFound(int levelType)
+    {
         switch (levelType)
         {
         case SUPPORTLINE:
@@ -77,35 +81,55 @@ public:
         }
     };
 
-    void isRBOFound(int levelType){
+    void isRBOFound(int levelType)
+    {
         switch (levelType)
         {
         case SUPPORTLINE:
             ROOT.reverseBreakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
+            if (ROOT.reverseBreakoutFound)
+            {
+                startPrice = ROOT.SupportLevel;
+                endPrice = ROOT.ResistanceLevel;
+            }
             break;
         case RESISTANCELINE:
             ROOT.reverseBreakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
+            if (ROOT.reverseBreakoutFound)
+            {
+                startPrice = ROOT.ResistanceLevel;
+                endPrice = ROOT.SupportLevel;
+            }
             break;
         }
-        if(ROOT.reverseBreakoutFound) this.switchTradeType(levelType);
+        if (ROOT.reverseBreakoutFound)
+        {
+            __COB.name = "Fib retracement";
+            __COB.startPrice = startPrice;
+            __COB.endPrice = endPrice;
+            this.addRootObject(__COB);
+            this.switchTradeType(levelType);
+        }
     };
 
     void checkVolume(int levelType, bool typeVal)
     {
-        this.switchLevelType(levelType,typeVal);
+        this.switchLevelType(levelType, typeVal);
         if (!ROOT.volumeChecked)
         {
             ROOT.volumeChecked = true;
             ROOT.BOBVolume = iVolume(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
             ROOT.BBOBVolume = iVolume(parent.CurrentSymbol, PERIOD_M1, parent.previousBar + 1);
-            if(!ROOT.breakoutFound) this.isBOFound(levelType);
-            if(ROOT.breakoutFound) this.isRBOFound(levelType);
+            if (!ROOT.breakoutFound)
+                this.isBOFound(levelType);
+            if (ROOT.breakoutFound)
+                this.isRBOFound(levelType);
         }
     };
 
     void unCheckVolume(int levelType, bool typeVal)
     {
-        this.switchLevelType(levelType,typeVal);
+        this.switchLevelType(levelType, typeVal);
         ROOT.volumeChecked = false;
     };
 }

@@ -29,7 +29,6 @@
 #include <HectperScalper\customChatObjects.mqh>;
 #include <HectperScalper\CustomTicket.mqh>;
 #include <HectperScalper\init\start.mqh>;
-#include <HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\BBAnalizer.mqh>;
 #include <HectperScalper\MultiChart\chart.mqh>;
 #include <HectperScalper\MultiChart\BotInstance.mqh>;
 #include <HectperScalper\SignalProviders\signalprovider.mqh>;

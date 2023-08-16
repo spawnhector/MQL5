@@ -27,7 +27,7 @@ public:
 
     D_c *getChartAnalizer()
     {
-        return new BBChartAnalyzer(providerData, DCID);
+        return new BBChartAnalyzer(providerData);
     }
 
     void createInterFace(string _symb) override
@@ -38,8 +38,6 @@ public:
     void createDuplicateChart(string symb)
     {
         DCID.symbol = symb;
-        if (!DCID.chartID)
-        {
             ENUM_TIMEFRAMES timeframe = PERIOD_M1;
             DCID.chartID = ChartOpen(DCID.symbol, timeframe);
             if (DCID.chartID < 0)
@@ -47,11 +45,10 @@ public:
             else
             {
                 ChartSetInteger(DCID.chartID, CHART_SHOW_GRID, false);
-                DrawRectangles();
+                // DrawRectangles();
                 AddVolumeIndicator();
                 addCustomIndicator();
             }
-        }
     }
 
     void AddVolumeIndicator()
@@ -212,7 +209,7 @@ public:
     void PlotBB()
     {
         string objectName = "BB-Plot-" + DCID.symbol + "Start";
-        PlaceVerticalLine(DCID.startBar.time, objectName, clrHotPink);
+        // PlaceVerticalLine(DCID.startBar.time, objectName, clrHotPink);
         IdentifySupportResistanceLevels();
     }
 

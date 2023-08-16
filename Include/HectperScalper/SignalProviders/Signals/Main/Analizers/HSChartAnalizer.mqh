@@ -3,8 +3,7 @@
 class HSChartAnalyzer : public HSChartHelpers
 {
 public:
-    HSChartAnalyzer(ProviderData &_providerData, DCInterfaceData &_DCID) : HSChartHelpers() {
-        DCID=_DCID;
+    HSChartAnalyzer(ProviderData &_providerData) : HSChartHelpers() {
         providerData = _providerData;
     };
     ~HSChartAnalyzer() {};

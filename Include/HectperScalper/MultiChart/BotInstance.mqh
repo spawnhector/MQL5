@@ -19,18 +19,20 @@ public:
   double CorrectedLot;
   TradeOptimizer *Optimizer;
 
-  BotInstance(int _index, int _chartindex) : _Trader()
+  BotInstance(int _chartindex) : _Trader()
   {
     chartindex = _chartindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
-    if (Signals)
-      for (int i = 0; i < ArraySize(_PROVIDERS); i++)
-      {
-        _INTERFACE = _PROVIDERS[i].getChartInterface();
-        _DC = _INTERFACE.getChartAnalizer();
-        _DC.analyzeChart(this);
-        this.addChartAnalizer();
-      };
+    ArrayResize(_DCS, ArraySize(_PROVIDERS));
+    // ArrayResize(_SDCS, ArraySize(S));
+    for (int i = 0; i < ArraySize(_PROVIDERS); i++)
+    {
+      _INTERFACE = _PROVIDERS[i].getChartInterface();
+      _DC = _INTERFACE.getChartAnalizer();
+      _DC.analyzeChart(this);
+      _DCS[i] = _DC;
+    }
+    // _SDCS[__chartSymbol.symbolIndex(CurrentSymbol)] = _DCS;
   };
 
   ~BotInstance(){};
@@ -46,29 +48,29 @@ public:
     timeframe = "m1";
     clr = clrGainsboro;
     currentBar = iBarShift(CurrentSymbol, PERIOD_M1, TimeCurrent());
-    previousBar = currentBar +1;
+    previousBar = currentBar + 1;
+    DCID.root.update();
     if (strat_trade && bNewBar())
-      {
-        _SetState();
-        for (int i = 0; i < ArraySize(_DCS); i++)
-        {
-          __root = _DCS[i].GetRootData();
-          if (__root.symbol == CurrentSymbol)
-            _DCS[i].OnTick(this);
-        }
-        // // for (int i = 0; i < ArraySize(BotSignals); i++)
-        // {
-        //   ProviderData providerStorage = BotSignals[i].GetProviderData();
-        //   int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
-        //   if (isSelected != -1)
-        //   {
-        //     // Signals.providers[providerStorage.ProviderIndex].analizeOnTick(this);
-        //     BotSignals[i]._Trade(this);
-        //     BotSignals[i].clearBase();
-        //   }
-        // }
-        // Optimizer.checkCloseTrades(this);
-      }
+    {
+      _SetState();
+      // Print(ArraySize(_SDCS));
+      // for (int i = 0; i < ArraySize(_PROVIDERS); i++)
+      // {
+      //   ProviderData providerStorage = _PROVIDERS[i].GetProviderData();
+      //   int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
+      //   if (isSelected != -1)
+      //   {
+      //     for (int l = 0; l < ArraySize(_DCS); l++)
+      //     {
+      //     // Print(_DCS[l].);
+      //       __root = _DCS[l].GetRootData();
+      //       if (__root.symbol == CurrentSymbol)
+      //         _DCS[l].OnTick(this);
+      //     }
+      //   }
+      // }
+      // Optimizer.checkCloseTrades(this);
+    }
   };
 
 private:
@@ -106,7 +108,6 @@ private:
     }
     return false;
   };
-
   void addChartAnalizer()
   {
     ArrayResize(_DCS, ArraySize(_DCS) + 1);

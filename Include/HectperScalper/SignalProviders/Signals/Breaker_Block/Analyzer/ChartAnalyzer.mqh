@@ -3,8 +3,7 @@
 class BBChartAnalyzer : public BBChartHelpers
 {
 public:
-    BBChartAnalyzer(ProviderData &_providerData, DCInterfaceData &_DCID) : BBChartHelpers() {
-        DCID = _DCID;
+    BBChartAnalyzer(ProviderData &_providerData) : BBChartHelpers() {
         providerData = _providerData;
     };
     ~BBChartAnalyzer() {};

@@ -334,7 +334,18 @@ public:
         return TrendLinePrice;
     }
     void _Trade(stc01 &chartData){
-        Print(chartData.tradeType);
+        if(!chartData.tradeOpen){
+            switch (chartData.tradeType)
+            {
+            case BUY:
+                m_trade.Buy(0.01, CurrentSymbol, PriceAsk, 0.0, 0.0, NULL);
+                break;
+            case SELL:
+                m_trade.Sell(0.01, CurrentSymbol, PriceBid, 0.0, 0.0, NULL);
+                break;
+            }
+            chartData.tradeOpen = true;
+        }
         // if (m_trade.Buy(CorrectedLot, parent.GetCurrentSymbol(), buyprice, sl, tp, NULL))
         // {
         //     ulong Ticket = m_trade.ResultOrder();
