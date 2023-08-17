@@ -107,6 +107,7 @@ public:
             __COB.name = "Fib retracement";
             __COB.startPrice = startPrice;
             __COB.endPrice = endPrice;
+            __COB.time = iTime(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
             this.addRootObject(__COB);
             this.switchTradeType(levelType);
         }

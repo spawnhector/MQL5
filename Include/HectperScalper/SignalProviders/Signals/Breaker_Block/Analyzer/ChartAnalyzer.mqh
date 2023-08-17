@@ -22,4 +22,7 @@ public:
         if (ROOT.reverseBreakoutFound) parent._Trade(ROOT);
     };
 
+    void UpdateInterface() override{
+        DCID.root.update(ROOT);
+    };
 };

@@ -44,7 +44,8 @@ public:
     clr = clrGainsboro;
     currentBar = iBarShift(CurrentSymbol, PERIOD_M1, TimeCurrent());
     previousBar = currentBar + 1;
-    DCID.root.update();
+    _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface();
+    
     if (strat_trade && bNewBar())
     {
       _SetState();

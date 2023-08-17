@@ -16,11 +16,11 @@ public:
 
     void plot(string syb, ENUM_TIMEFRAMES _prd)
     {
-        MqlRates rates[];
         // int rangeStartBar = DCID.startBar.barIndex; // Start bar index of the range
         int rangeStartBar = 1;                // Start bar index of the range
         int rangeEndBar = rangeStartBar + 50; // End bar index of the range
 
+        MqlRates rates[];
         int copiedBars = CopyRates(syb, _prd, rangeStartBar, rangeEndBar - rangeStartBar + 1, rates);
         if (copiedBars <= 0)
         {

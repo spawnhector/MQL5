@@ -15,6 +15,7 @@ public:
     virtual stc01 GetRootData() const = 0;
     virtual ProviderData GetProviderData() const = 0;
     virtual void OnTick(_Trader &_parent){};
+    virtual void UpdateInterface(){};
     virtual void analyzeChart(_Trader &_parent){};
 } *_DC;
 

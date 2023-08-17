@@ -38,17 +38,17 @@ public:
     void createDuplicateChart(string symb)
     {
         DCID.symbol = symb;
-            ENUM_TIMEFRAMES timeframe = PERIOD_M1;
-            DCID.chartID = ChartOpen(DCID.symbol, timeframe);
-            if (DCID.chartID < 0)
-                Print("Failed to open the chart! Error code:", GetLastError());
-            else
-            {
-                ChartSetInteger(DCID.chartID, CHART_SHOW_GRID, false);
-                // DrawRectangles();
-                AddVolumeIndicator();
-                addCustomIndicator();
-            }
+        ENUM_TIMEFRAMES timeframe = PERIOD_M1;
+        DCID.chartID = ChartOpen(DCID.symbol, timeframe);
+        if (DCID.chartID < 0)
+            Print("Failed to open the chart! Error code:", GetLastError());
+        else
+        {
+            ChartSetInteger(DCID.chartID, CHART_SHOW_GRID, false);
+            // DrawRectangles();
+            AddVolumeIndicator();
+            addCustomIndicator();
+        }
     }
 
     void AddVolumeIndicator()

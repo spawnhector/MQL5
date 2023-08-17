@@ -18,4 +18,8 @@ public:
         parent = _parent;
         // if(_parent.CurrentSymbol == root.)CheckPriceBreakOut();
     };
+    
+    void UpdateInterface() override{
+        DCID.root.update(ROOT);
+    };
 }

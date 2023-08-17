@@ -36,10 +36,6 @@ public:
         _interface.createInterFace(_symb);
         interfaceData = _interface.GetInterfaceData();
         _interface.PlotBB();
-        // if (interfaceData.redRectangle && interfaceData.greenRectangle)
-        // {
-        //     // _interface.GetObjectStartBar();
-        // }
     }
 
     void addIndex(int index) override

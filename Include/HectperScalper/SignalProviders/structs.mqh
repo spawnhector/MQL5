@@ -20,6 +20,7 @@ struct chartObjects
     string name;
     double startPrice;
     double endPrice;
+    datetime time;
 } __COB;
 
 struct stc01
@@ -53,22 +54,22 @@ struct stc01
 struct InterfaceHandler
 {
     string id;
-    void update()
+    void update(stc01 &_RT)
     {
-        for (int i = 0; i < ArraySize(__root.__COBS); i++)
+        for (int i = 0; i < ArraySize(_RT.__COBS); i++)
         {
-            // Print(ArraySize(__root.__COBS));
-            if (DCID.symbol == __root.symbol)
+            Print("here");
+            if (DCID.symbol == _RT.symbol)
             {
-                AddFibonacciRetracement(__root.__COBS[i].startPrice, __root.__COBS[i].endPrice);
+                AddFibonacciRetracement(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice,_RT.__COBS[i].time);
             }
         }
     };
 
-    void AddFibonacciRetracement(double startPrice, double endPrice)
+    void AddFibonacciRetracement(double startPrice, double endPrice, datetime time)
     {
         string name = "Fibonacci_";
-        ObjectCreate(DCID.chartID, name, OBJ_FIBO, 0, TimeCurrent(), startPrice, TimeCurrent(), endPrice);
+        ObjectCreate(DCID.chartID, name, OBJ_FIBO, 0, time, startPrice, TimeCurrent(), endPrice);
     };
 } InterfaceRoot;
 
