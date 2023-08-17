@@ -21,7 +21,7 @@ CTrade m_trade;           // trading object
 
 int Chart::TCN = 0;
 Chart *Charts[];
-BotInstance *Bots[];
+BotInstance *BI, *Bots[];
 SignalProvider *Signals;
 
 //+------------------------------------------------------------------+
@@ -34,7 +34,6 @@ int OnInit()
     Print("Automated trading is currently disabled. Please enable automated trading to use this Expert Advisor.");
     return INIT_FAILED;
   }
-  
 
   if (isTestAccount)
   {
@@ -66,16 +65,20 @@ void OnDeinit(const int reason)
   DeleteSimpleInterface();
   if (Signals)
     Signals.removeProviders();
-  delete Signals; 
-  delete _DC; 
+  delete Signals;
+  delete _DC;
 
   for (int j = 0; j < ArraySize(Charts); j++)
     delete Charts[j];
   for (int j = 0; j < ArraySize(Bots); j++)
-    delete Bots[j]; 
-  for (int j = 0; j < ArraySize(_DCS); j++)
-    delete _DCS[j]; 
+    delete Bots[j];
 
+  for (int j = 0; j < ArraySize(_SDCS); j++)
+  {
+    for (int i = 0; i < ArraySize(_SDCS[j].DCS); i++)
+      delete _SDCS[j].DCS[i];
+    delete _SDCS[j];
+  }
   EventKillTimer();
 }
 
@@ -98,7 +101,7 @@ void OnTimer()
     EventKillTimer();
     return;
   }
-  EventChartCustom(0, Ev_RollingTo, user01, 0.0, ""); 
+  EventChartCustom(0, Ev_RollingTo, user01, 0.0, "");
 
   if (enableServer)
   {

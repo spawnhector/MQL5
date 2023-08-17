@@ -92,5 +92,5 @@ void CreateCharts() // create the chart objects
     Charts[j].Timeframe = T[j];                  // period
   }
   // Print(Charts[1].CloseI);
-  ArrayResize(Bots, ArraySize(S)); // set the size of the bot array
+  // ArrayResize(Bots, ArraySize(S)); // set the size of the bot array
 }

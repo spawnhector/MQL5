@@ -42,9 +42,8 @@ void AllChartsTick()//ticks of all charts
 //+------------------------------------------------------------------+
 void AllBotsTick()//ticks of all bots
   {
-   for(int i = 0; i < ArraySize(S); i++)
+   for(int i = 0; i < ArraySize(Bots); i++)
      {
-      if(Charts[Bots[i].chartindex].lastcopied >= Chart::TCN+1)
          Bots[i].InstanceTick();
      }
   }

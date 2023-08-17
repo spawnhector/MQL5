@@ -24,6 +24,7 @@ public:
     MqlRates candels[];
     double closes[];
     MqlRates rte[];
+    int ProviderIndex;
 
     _Trader()
     {

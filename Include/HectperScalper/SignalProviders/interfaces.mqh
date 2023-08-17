@@ -16,7 +16,13 @@ public:
     virtual ProviderData GetProviderData() const = 0;
     virtual void OnTick(_Trader &_parent){};
     virtual void analyzeChart(_Trader &_parent){};
-} *_DC,*_DCS[];
+} *_DC;
+
+class SDCS{
+    public:
+        SDCS(){};
+        D_c* DCS[];
+} *_SDCS[];
 
 class DCInterface
 {

@@ -19,20 +19,15 @@ public:
   double CorrectedLot;
   TradeOptimizer *Optimizer;
 
-  BotInstance(int _chartindex) : _Trader()
+  BotInstance(int _providerindex, int _chartindex) : _Trader()
   {
     chartindex = _chartindex;
+    ProviderIndex = _providerindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
-    ArrayResize(_DCS, ArraySize(_PROVIDERS));
-    // ArrayResize(_SDCS, ArraySize(S));
-    for (int i = 0; i < ArraySize(_PROVIDERS); i++)
-    {
-      _INTERFACE = _PROVIDERS[i].getChartInterface();
-      _DC = _INTERFACE.getChartAnalizer();
-      _DC.analyzeChart(this);
-      _DCS[i] = _DC;
-    }
-    // _SDCS[__chartSymbol.symbolIndex(CurrentSymbol)] = _DCS;
+    _INTERFACE = _PROVIDERS[ProviderIndex].getChartInterface();
+    _DC = _INTERFACE.getChartAnalizer();
+    _DC.analyzeChart(this);
+    _SDCS[chartindex].DCS[ProviderIndex] = _DC;
   };
 
   ~BotInstance(){};
@@ -53,22 +48,11 @@ public:
     if (strat_trade && bNewBar())
     {
       _SetState();
-      // Print(ArraySize(_SDCS));
-      // for (int i = 0; i < ArraySize(_PROVIDERS); i++)
-      // {
-      //   ProviderData providerStorage = _PROVIDERS[i].GetProviderData();
-      //   int isSelected = IsInArray(selectedProviders, providerStorage.ProviderIndex);
-      //   if (isSelected != -1)
-      //   {
-      //     for (int l = 0; l < ArraySize(_DCS); l++)
-      //     {
-      //     // Print(_DCS[l].);
-      //       __root = _DCS[l].GetRootData();
-      //       if (__root.symbol == CurrentSymbol)
-      //         _DCS[l].OnTick(this);
-      //     }
-      //   }
-      // }
+      int isSelected = IsInArray(selectedProviders, ProviderIndex);
+      if (isSelected != -1)
+      {
+        _SDCS[chartindex].DCS[ProviderIndex].OnTick(this);
+      }
       // Optimizer.checkCloseTrades(this);
     }
   };
@@ -108,10 +92,6 @@ private:
     }
     return false;
   };
-  void addChartAnalizer()
-  {
-    ArrayResize(_DCS, ArraySize(_DCS) + 1);
-    _DCS[ArraySize(_DCS) - 1] = _DC;
-  };
 };
+
 //+------------------------------------------------------------------+

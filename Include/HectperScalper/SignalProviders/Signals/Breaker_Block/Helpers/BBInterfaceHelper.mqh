@@ -24,18 +24,18 @@ public:
     void IdentifySupportResistanceLevels()
     {
         bool updated = 0;
-        for (int i = 0; i < ArraySize(_DCS); i++)
-        {   __root = _DCS[i].GetRootData();
-            __providerData = _DCS[i].GetProviderData();
-            if (__providerData.ProviderName == providerData.ProviderName)
-                if (__root.symbol == DCID.symbol)
-                {
-                    DCID.SupportLevel = __root.SupportLevel;
-                    DCID.ResistanceLevel = __root.ResistanceLevel;
-                    DCID.rangeTime = __root.rangeTime;
-                    updated = 1;
-                }
-        };
+        // for (int i = 0; i < ArraySize(_DCS); i++)
+        // {   __root = _DCS[i].GetRootData();
+        //     __providerData = _DCS[i].GetProviderData();
+        //     if (__providerData.ProviderName == providerData.ProviderName)
+        //         if (__root.symbol == DCID.symbol)
+        //         {
+        //             DCID.SupportLevel = __root.SupportLevel;
+        //             DCID.ResistanceLevel = __root.ResistanceLevel;
+        //             DCID.rangeTime = __root.rangeTime;
+        //             updated = 1;
+        //         }
+        // };
         if (!updated)
         {
             DrawRSLines.plot(DCID.symbol, Period());
