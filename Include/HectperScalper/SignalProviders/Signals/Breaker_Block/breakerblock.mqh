@@ -64,7 +64,7 @@ public:
                 if (szRet[0] == "CHARTCHANGE")
                 {
                     delete _interface;
-                    ObjectsDeleteAll(interfaceData.chartID,"BB-Plot");
+                    ObjectsDeleteAll(interfaceData.chartID, "BB-Plot");
                     createInterface(szRet[1]);
                 }
             }

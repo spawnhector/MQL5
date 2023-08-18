@@ -32,5 +32,5 @@ public:
                     SymbolSelect(szRet[1], false);
             }
         }
-    }
+    };
 }

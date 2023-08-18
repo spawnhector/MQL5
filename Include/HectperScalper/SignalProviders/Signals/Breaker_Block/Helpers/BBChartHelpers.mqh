@@ -28,6 +28,7 @@ public:
         DrawRSLines.plot((string)parent.CurrentSymbol, Period());
         ROOT.SupportLevel = DrawRSLines.rangeLow;
         ROOT.ResistanceLevel = DrawRSLines.rangeHigh;
+        ROOT.rangeTime = DrawRSLines.rangeTime;
     };
 
     void CheckPriceBreakOut()
@@ -104,10 +105,11 @@ public:
         }
         if (ROOT.reverseBreakoutFound)
         {
-            __COB.name = "Fib retracement";
+            __COB.name = FIBO_RET;
             __COB.startPrice = startPrice;
             __COB.endPrice = endPrice;
-            __COB.time = iTime(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
+            // __COB.time = iTime(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
+            __COB.time = ROOT.rangeTime;
             this.addRootObject(__COB);
             this.switchTradeType(levelType);
         }
