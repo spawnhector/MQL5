@@ -8,6 +8,8 @@ enum AppValues{
 enum DCObjects{
     FIBO_RET
 };
-// string EnumItemsString[] = {
-//    "Fibonacci_",
-// };
+
+enum DCOBJ_PROP{
+    _START,
+    _REVERSE
+};

@@ -335,17 +335,17 @@ public:
         return TrendLinePrice;
     }
     void _Trade(stc01 &chartData){
-        if(!chartData.tradeOpen){
-            switch (chartData.tradeType)
+        if(!chartData.trade.open){
+            switch (chartData.trade.type)
             {
             case BUY:
-                m_trade.Buy(0.01, CurrentSymbol, PriceAsk, 0.0, 0.0, NULL);
+                m_trade.Buy(0.01, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             case SELL:
-                m_trade.Sell(0.01, CurrentSymbol, PriceBid, 0.0, 0.0, NULL);
+                m_trade.Sell(0.01, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             }
-            chartData.tradeOpen = true;
+            chartData.trade.open = true;
         }
         // if (m_trade.Buy(CorrectedLot, parent.GetCurrentSymbol(), buyprice, sl, tp, NULL))
         // {

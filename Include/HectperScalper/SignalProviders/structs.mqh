@@ -47,8 +47,13 @@ struct stc01
     long BBOBVolume;
     bool breakoutFound;
     bool reverseBreakoutFound;
-    int tradeType;
-    bool tradeOpen;
+    struct trader
+    {
+        int type;
+        bool open;
+        double tp;
+        double sl;
+    } trade;
     chartObjects __COBS[];
 } __root;
 
@@ -57,76 +62,43 @@ struct ChartObjects
     struct Fibo_Ret
     {
         string _name;
-        void AddFibonacciRetracement(double startPrice, double endPrice, datetime time)
+        string levelObjName;
+        struct Fibo_Levels_Type{
+            struct Levels{
+                double price;
+            } LEVELS[];
+        } FIBO_LEVELS_TYPE[2];
+        void AddFibonacciRetracement(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time)
         {
-            _name= "Fibonacci_";
-            bool result = true;
-            int found = ObjectFind(DCID.chartID, _name);
-            if (found < 0)
+            _name = "Fibonacci_"+EnumToString(nameCat);
+            levelObjName = _name + "_Level_";
+            double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
+            int fiboSize = ArraySize(FibonacciLevels);
+            ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS,fiboSize);
+            ObjectDelete(DCID.chartID, _name);
+            for (int i = 1; i < fiboSize; i++)
             {
-                result = ObjectCreate(DCID.chartID, _name, OBJ_FIBO, 0, time, startPrice, TimeCurrent(), endPrice);
+                double fiboPrice = startPrice + (endPrice - startPrice) * FibonacciLevels[i];
+                string _levelObjName = levelObjName + IntegerToString(i);
+                if ((nameCat == _START) || (nameCat == _REVERSE && i >= 6))
+                {
+                    ObjectDelete(DCID.chartID, _levelObjName);
+                    ObjectCreate(DCID.chartID,_levelObjName, OBJ_TREND, 0, time, fiboPrice, TimeCurrent(), fiboPrice);
+                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_RAY_LEFT, false);
+                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_RAY_RIGHT, true);
+                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_STYLE, STYLE_DASH);
+                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_WIDTH, 2);
+                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_COLOR, clrDimGray);
+                }
+                FIBO_LEVELS_TYPE[nameCat].LEVELS[i].price = fiboPrice;
             }
-            else
-            {
-                result &= ObjectSetInteger(DCID.chartID, _name, OBJPROP_TIME, 0, time);
-                result &= ObjectSetInteger(DCID.chartID, _name, OBJPROP_TIME, 1, TimeCurrent());
-                result &= ObjectSetDouble(DCID.chartID, _name, OBJPROP_PRICE, 0, startPrice);
-                result &= ObjectSetDouble(DCID.chartID, _name, OBJPROP_PRICE, 1, endPrice);
-            }
+            // ObjectCreate(DCID.chartID, _name, OBJ_FIBO, 0, time, startPrice, TimeCurrent(), endPrice);
             ChartRedraw(DCID.chartID);
-            PrintFormat("Level 2=%f, level 6=%f", GetFiboLevel(DCID.chartID, 2), GetFiboLevel(DCID.chartID, 6));
         };
 
-        bool GetFiboStart(long chartId, datetime &time, double &price){
-             return (GetFiboPoint(chartId, 0, time, price));
-        };
-
-        bool GetFiboEnd(long chartId, datetime &time, double &price){
-             return (GetFiboPoint(chartId, 1, time, price));
-        };
-
-        bool GetFiboPoint(long chartId, int pointNumber, datetime &time, double &price)
+        double GetFiboLevel(DCOBJ_PROP _ty,int level)
         {
-            int found = ObjectFind(chartId, _name);
-            if (found < 0)
-                return (false);
-            time = (datetime)ObjectGetInteger(chartId, _name, OBJPROP_TIME, pointNumber);
-            price = ObjectGetDouble(chartId, _name, OBJPROP_PRICE, pointNumber);
-            return (true);
-        };
-
-        double GetFiboLevelByRatio(long chartId, double ratio)
-        {
-            datetime time;
-            double value1;
-            double value2;
-            if (!GetFiboStart(chartId, time, value1))
-                return (0);
-            if (!GetFiboEnd(chartId, time, value2))
-                return (0);
-            return (GetFiboLevelByRatio(value1, value2, ratio));
-        };
-
-        double GetFiboLevelByRatio(double value1, double value2, double ratio){
-             return (value2 + ((value1 - value2) * ratio));
-        };
-
-        double GetFiboLevel(long chartId, int level)
-        {
-            int found = ObjectFind(chartId, _name);
-            if (found < 0)
-            {
-                PrintFormat("%s not found", _name);
-                return (0);
-            }
-
-            if (level >= ObjectGetInteger(chartId, _name, OBJPROP_LEVELS))
-            {
-                PrintFormat("Invalid level %i", level);
-                return (0);
-            }
-            double ratio = ObjectGetDouble(chartId, _name, OBJPROP_LEVELVALUE, level);
-            return (GetFiboLevelByRatio(chartId, ratio));
+            return FIBO_LEVELS_TYPE[_ty].LEVELS[level].price;
         };
     } FIBO_RET;
 } DCOB;
@@ -143,7 +115,7 @@ struct InterfaceHandler
                 switch (_RT.__COBS[i].name)
                 {
                 case FIBO_RET:
-                    DCOB.FIBO_RET.AddFibonacciRetracement(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time);
+                    DCOB.FIBO_RET.AddFibonacciRetracement(_START,_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time);
                     break;
                 }
             }

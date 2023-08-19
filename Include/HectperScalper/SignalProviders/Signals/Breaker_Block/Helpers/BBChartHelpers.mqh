@@ -61,10 +61,10 @@ public:
         switch (levelType)
         {
         case SUPPORTLINE:
-            ROOT.tradeType = SELL;
+            ROOT.trade.type = SELL;
             break;
         case RESISTANCELINE:
-            ROOT.tradeType = BUY;
+            ROOT.trade.type = BUY;
             break;
         }
     };
@@ -92,6 +92,7 @@ public:
             {
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
+                // ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(DCID.chartID,)
             }
             break;
         case RESISTANCELINE:

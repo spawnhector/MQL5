@@ -49,7 +49,10 @@ public:
         objectName = "BB-Plot-" + DCID.symbol + "-ResistanceLevel";
         ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DCID.rangeTime, DCID.ResistanceLevel);
         ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
-        DCOB.FIBO_RET.AddFibonacciRetracement(DCID.SupportLevel,DCID.ResistanceLevel,DCID.rangeTime);
+        DCOB.FIBO_RET.AddFibonacciRetracement(_START,DCID.SupportLevel,DCID.ResistanceLevel,DCID.rangeTime);
+        DCOB.FIBO_RET.AddFibonacciRetracement(_REVERSE,DCID.ResistanceLevel,DCID.SupportLevel,DCID.rangeTime);
+        Print(DCOB.FIBO_RET.GetFiboLevel(_START,6));
+        Print(DCOB.FIBO_RET.GetFiboLevel(_REVERSE,7));
     }
 
     int GetBarIndexByTime(const datetime &targetTime)
