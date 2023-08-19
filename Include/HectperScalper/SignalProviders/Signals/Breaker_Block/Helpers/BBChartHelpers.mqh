@@ -92,7 +92,9 @@ public:
             {
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
-                // ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(DCID.chartID,)
+                DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
+                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, 6);
+                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, 7);
             }
             break;
         case RESISTANCELINE:
@@ -101,6 +103,9 @@ public:
             {
                 startPrice = ROOT.ResistanceLevel;
                 endPrice = ROOT.SupportLevel;
+                DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
+                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, 6);
+                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, 7);
             }
             break;
         }

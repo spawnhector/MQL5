@@ -11,5 +11,7 @@ enum DCObjects{
 
 enum DCOBJ_PROP{
     _START,
-    _REVERSE
+    _REVERSE,
+    _SHOW,
+    _HIDE
 };

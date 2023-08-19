@@ -63,40 +63,49 @@ struct ChartObjects
     {
         string _name;
         string levelObjName;
-        struct Fibo_Levels_Type{
-            struct Levels{
+
+        struct Fibo_Levels_Type
+        {
+            struct Levels
+            {
                 double price;
             } LEVELS[];
         } FIBO_LEVELS_TYPE[2];
-        void AddFibonacciRetracement(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time)
+
+        void Draw(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
-            _name = "Fibonacci_"+EnumToString(nameCat);
+            _name = "Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
             double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
             int fiboSize = ArraySize(FibonacciLevels);
-            ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS,fiboSize);
+            ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS, fiboSize);
             ObjectDelete(DCID.chartID, _name);
             for (int i = 1; i < fiboSize; i++)
             {
                 double fiboPrice = startPrice + (endPrice - startPrice) * FibonacciLevels[i];
-                string _levelObjName = levelObjName + IntegerToString(i);
-                if ((nameCat == _START) || (nameCat == _REVERSE && i >= 6))
+                if ((display == _SHOW) && ((nameCat == _START) || ((nameCat == _REVERSE) && (i >= 6))))
                 {
+                    string _levelObjName = levelObjName + IntegerToString(i);
                     ObjectDelete(DCID.chartID, _levelObjName);
-                    ObjectCreate(DCID.chartID,_levelObjName, OBJ_TREND, 0, time, fiboPrice, TimeCurrent(), fiboPrice);
-                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_RAY_LEFT, false);
-                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_RAY_RIGHT, true);
-                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_STYLE, STYLE_DASH);
-                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_WIDTH, 2);
-                    ObjectSetInteger(DCID.chartID,_levelObjName, OBJPROP_COLOR, clrDimGray);
+                    ObjectCreate(DCID.chartID, _levelObjName, OBJ_TREND, 0, time, fiboPrice, TimeCurrent(), fiboPrice);
+                    ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_RAY_LEFT, false);
+                    ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_RAY_RIGHT, true);
+                    ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_STYLE, STYLE_DASH);
+                    ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_WIDTH, 2);
+                    ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_COLOR, clrDimGray);
                 }
                 FIBO_LEVELS_TYPE[nameCat].LEVELS[i].price = fiboPrice;
             }
-            // ObjectCreate(DCID.chartID, _name, OBJ_FIBO, 0, time, startPrice, TimeCurrent(), endPrice);
             ChartRedraw(DCID.chartID);
         };
 
-        double GetFiboLevel(DCOBJ_PROP _ty,int level)
+        void AddFibo_Ret(double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
+        {
+            Draw(_START, startPrice, endPrice, time, display);
+            Draw(_REVERSE, endPrice, startPrice, time, display);
+        };
+
+        double GetFiboLevel(DCOBJ_PROP _ty, int level)
         {
             return FIBO_LEVELS_TYPE[_ty].LEVELS[level].price;
         };
@@ -115,7 +124,7 @@ struct InterfaceHandler
                 switch (_RT.__COBS[i].name)
                 {
                 case FIBO_RET:
-                    DCOB.FIBO_RET.AddFibonacciRetracement(_START,_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time);
+                    DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
                     break;
                 }
             }
