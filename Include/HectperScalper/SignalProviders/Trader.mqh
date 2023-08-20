@@ -339,10 +339,10 @@ public:
             switch (chartData.trade.type)
             {
             case BUY:
-                m_trade.Buy(0.01, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                m_trade.Buy(0.10, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             case SELL:
-                m_trade.Sell(0.01, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                m_trade.Sell(0.10, CurrentSymbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             }
             chartData.trade.open = true;
