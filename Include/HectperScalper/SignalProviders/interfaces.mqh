@@ -19,6 +19,7 @@ public:
     virtual void UpdateInterface(){};
     virtual void Optimize(_Trader &_parent){};
     virtual void analyzeChart(_Trader &_parent){};
+    virtual void reAnalyzeChart(_Trader &_parent){};
 } *_DC;
 
 class SDCS{

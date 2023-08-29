@@ -35,7 +35,7 @@ public:
         _interface = new BBInterface(providerData);
         _interface.createInterFace(_symb);
         interfaceData = _interface.GetInterfaceData();
-        // _interface.PlotBB();
+        DCID.root.toUpdate = true;
     }
 
     void addIndex(int index) override

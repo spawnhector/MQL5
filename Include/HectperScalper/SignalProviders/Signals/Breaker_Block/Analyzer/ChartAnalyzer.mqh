@@ -18,7 +18,16 @@ public:
         ROOT.symbol = _parent.CurrentSymbol;
         IdentifySupportResistanceLevels(_parent);
     };
-    
+
+    void reAnalyzeChart(_Trader &_parent) override
+    {
+        ROOT.analyzing = true;
+        DCID.root.removeObject(ROOT);
+        IdentifySupportResistanceLevels(_parent);
+        DCID.root.toUpdate = true;
+        ROOT.trade.open = false;
+    };
+
     void OnTick(_Trader &_parent) override{
         CheckPriceBreakOut(_parent);
         if (ROOT.reverseBreakoutFound) _parent._Trade(ROOT);
@@ -33,6 +42,6 @@ public:
     };
 
     void Optimize(_Trader &_parent) override{
-        Optimizer.optimize(_parent,ROOT);
+        Optimizer.optimize(_parent,ROOT,this);
     };
 };

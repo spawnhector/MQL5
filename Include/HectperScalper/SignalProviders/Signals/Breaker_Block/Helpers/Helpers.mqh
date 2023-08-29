@@ -80,7 +80,6 @@ public:
     void addRootObject(chartObjects &cob){
         ArrayResize(ROOT.__COBS, ArraySize(ROOT.__COBS) + 1);
         ROOT.__COBS[ArraySize(ROOT.__COBS) - 1] = cob;
-        ROOT.toUpdate = true;
     };
 
 };

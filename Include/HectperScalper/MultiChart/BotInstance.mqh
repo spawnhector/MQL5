@@ -42,7 +42,7 @@ public:
 
     _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface();
     _point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
-    _SDCS[chartindex].DCS[ProviderIndex].OnTestTick(this);
+    // _SDCS[chartindex].DCS[ProviderIndex].OnTestTick(this);
     _SDCS[chartindex].DCS[ProviderIndex].Optimize(this);
 
     if (strat_trade && bNewBar())
@@ -51,7 +51,7 @@ public:
       int isSelected = IsInArray(selectedProviders, ProviderIndex);
       if (isSelected != -1)
       {
-        // _SDCS[chartindex].DCS[ProviderIndex].OnTick(this);
+        _SDCS[chartindex].DCS[ProviderIndex].OnTick(this);
       }
     }
   };
@@ -62,7 +62,7 @@ public:
     _DC.analyzeChart(this);
     _SDCS[chartindex].DCS[ProviderIndex] = _DC;
   };
-  
+
 private:
   datetime Time0;
   bool bNewBar() // new bar

@@ -49,7 +49,6 @@ struct stc01
     long BBOBVolume;
     bool breakoutFound;
     bool reverseBreakoutFound;
-    bool toUpdate;
     struct trader
     {
         int type;
@@ -77,7 +76,7 @@ struct ChartObjects
 
         void Draw(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
-            _name = "Fibonacci_" + EnumToString(nameCat);
+            _name = "BB-Plot-" + DCID.symbol +"_Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
             double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
             int fiboSize = ArraySize(FibonacciLevels);
@@ -127,7 +126,6 @@ struct ChartObjects
 
         void AddBreakOut_Levels(double support, double resistance, datetime time)
         {
-            Print("adding break out level");
             Draw(SUPPORTLINE, time, support);
             Draw(RESISTANCELINE, time, resistance);
         };
@@ -136,28 +134,31 @@ struct ChartObjects
 
 struct InterfaceHandler
 {
-    string id;
+    bool toUpdate;
     void update(stc01 &_RT)
     {
-        if(_RT.toUpdate) if (DCID.symbol == _RT.symbol)
-        {
-            for (int i = 0; i < ArraySize(_RT.__COBS); i++)
+        if (toUpdate)        
+            if (DCID.symbol == _RT.symbol)
             {
-                switch (_RT.__COBS[i].name)
+                for (int i = 0; i < ArraySize(_RT.__COBS); i++)
                 {
-                case FIBO_RET:
-                    DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
-                    break;
-                case BREAKOUT_LEVELS:
-                    DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
-                    break;
+                    switch (_RT.__COBS[i].name)
+                    {
+                    case FIBO_RET:
+                        DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
+                        break;
+                    case BREAKOUT_LEVELS:
+                        DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
+                        break;
+                    }
                 }
+                toUpdate = false;
             }
-            _RT.toUpdate = false;
-        }
     };
-    void removeObject(){
 
+    void removeObject(stc01 &root){
+        ArrayFree(root.__COBS);
+        ObjectsDeleteAll(DCID.chartID, "BB-Plot-" + root.symbol);
     };
 } InterfaceRoot;
 
