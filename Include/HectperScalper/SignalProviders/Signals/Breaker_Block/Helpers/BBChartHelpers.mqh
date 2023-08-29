@@ -39,7 +39,6 @@ public:
         __COB.resistance = ROOT.ResistanceLevel;
         __COB.time = ROOT.rangeTime;
         this.addRootObject(__COB);
-        ROOT.toUpdate = true;
     };
 
     void CheckPriceBreakOut(_Trader &_prnt)
@@ -127,7 +126,6 @@ public:
             __COB.endPrice = endPrice;
             __COB.time = ROOT.rangeTime;
             this.addRootObject(__COB);
-            ROOT.toUpdate = true;
             this.switchTradeType(levelType);
         }
     };
