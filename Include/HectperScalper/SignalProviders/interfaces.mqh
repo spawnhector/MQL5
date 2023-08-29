@@ -6,7 +6,7 @@ public:
     virtual void _Trade(_Trader &parent){};
     virtual void clearBase(){};
     virtual void DispatchMessage(const int id, const long &lparam, const double &dparam, const string &sparam){};
-} *_TRADER, *_TRADERS[];
+} *_TRADER, *_PARENTS[];
 
 class D_c
 {
@@ -15,7 +15,9 @@ public:
     virtual stc01 GetRootData() const = 0;
     virtual ProviderData GetProviderData() const = 0;
     virtual void OnTick(_Trader &_parent){};
+    virtual void OnTestTick(_Trader &_parent){};
     virtual void UpdateInterface(){};
+    virtual void Optimize(_Trader &_parent){};
     virtual void analyzeChart(_Trader &_parent){};
 } *_DC;
 

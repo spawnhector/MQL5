@@ -6,7 +6,7 @@
 #include <HectperScalper\SignalProviders\interfaces.mqh>;
 #include <HectperScalper\MultiChart\TradeOptimizer.mqh>;
 #include "..\..\..\..\..\Include\HectperScalper\SignalProviders\Signals\Breaker_Block\Analyzer\ChartAnalyzer.mqh";
-#include "..\..\..\..\..\Include\HectperScalper\SignalProviders\Signals\Main\Analizers\HSChartAnalizer.mqh";
+// #include "..\..\..\..\..\Include\HectperScalper\SignalProviders\Signals\Main\Analizers\HSChartAnalizer.mqh";
 #include <HectperScalper\SignalProviders\Signals\Breaker_Block\BBInterface.mqh>;
 #include <HectperScalper\AppInterface\CreateSimpleInterface.mqh>;
 #include <HectperScalper\AppInterface\DeleteSimpleInterface.mqh>;

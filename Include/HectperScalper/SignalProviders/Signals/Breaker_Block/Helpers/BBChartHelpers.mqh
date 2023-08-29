@@ -5,7 +5,12 @@ class BBChartHelpers : public BBDCHelpers
 public:
     double startPrice;
     double endPrice;
-    BBChartHelpers(){};
+    int sl;
+    int tp;
+    BBChartHelpers(){
+        sl = 5;
+        tp = 7;
+    };
     ~BBChartHelpers(){};
 
     stc01 GetRootData() const override
@@ -23,24 +28,24 @@ public:
         return providerData;
     };
 
-    void IdentifySupportResistanceLevels()
+    void IdentifySupportResistanceLevels(_Trader &_prnt)
     {
-        DrawRSLines.plot((string)parent.CurrentSymbol, Period());
+        DrawRSLines.plot((string)_prnt.CurrentSymbol, Period());
         ROOT.SupportLevel = DrawRSLines.rangeLow;
         ROOT.ResistanceLevel = DrawRSLines.rangeHigh;
         ROOT.rangeTime = DrawRSLines.rangeTime;
     };
 
-    void CheckPriceBreakOut()
+    void CheckPriceBreakOut(_Trader &_prnt)
     {
-        if (parent.PriceBid < ROOT.SupportLevel)
-            this.checkVolume(SUPPORTLINE, true);
-        if (ROOT.SupportLevelPassed && parent.PriceBid > ROOT.SupportLevel)
-            this.unCheckVolume(SUPPORTLINE, false);
-        if (parent.PriceBid > ROOT.ResistanceLevel)
-            this.checkVolume(RESISTANCELINE, true);
-        if (ROOT.ResistanceLevelPassed && parent.PriceBid < ROOT.ResistanceLevel)
-            this.unCheckVolume(RESISTANCELINE, false);
+        if (_prnt.PriceBid < ROOT.SupportLevel)
+            this.checkVolume(_prnt,SUPPORTLINE, true);
+        if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
+            this.unCheckVolume(_prnt,SUPPORTLINE, false);
+        if (_prnt.PriceBid > ROOT.ResistanceLevel)
+            this.checkVolume(_prnt,RESISTANCELINE, true);
+        if (ROOT.ResistanceLevelPassed && _prnt.PriceBid < ROOT.ResistanceLevel)
+            this.unCheckVolume(_prnt,RESISTANCELINE, false);
     };
 
     void switchLevelType(int levelType, bool typeVal) // level type: SUPPORTLINE support(low), RESISTANCELINE resistance(high)
@@ -93,8 +98,8 @@ public:
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
-                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, 3);
-                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, 6);
+                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, sl);
+                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, tp);
             }
             break;
         case RESISTANCELINE:
@@ -104,8 +109,8 @@ public:
                 startPrice = ROOT.ResistanceLevel;
                 endPrice = ROOT.SupportLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
-                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, 3);
-                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, 6);
+                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, sl);
+                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, tp);
             }
             break;
         }
@@ -121,14 +126,14 @@ public:
         }
     };
 
-    void checkVolume(int levelType, bool typeVal)
+    void checkVolume(_Trader &_prnt,int levelType, bool typeVal)
     {
         this.switchLevelType(levelType, typeVal);
         if (!ROOT.volumeChecked)
         {
             ROOT.volumeChecked = true;
-            ROOT.BOBVolume = iVolume(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
-            ROOT.BBOBVolume = iVolume(parent.CurrentSymbol, PERIOD_M1, parent.previousBar + 1);
+            ROOT.BOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar);
+            ROOT.BBOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar + 1);
             if (!ROOT.breakoutFound)
                 this.isBOFound(levelType);
             if (ROOT.breakoutFound)
@@ -136,7 +141,7 @@ public:
         }
     };
 
-    void unCheckVolume(int levelType, bool typeVal)
+    void unCheckVolume(_Trader &_prnt,int levelType, bool typeVal)
     {
         this.switchLevelType(levelType, typeVal);
         ROOT.volumeChecked = false;

@@ -68,7 +68,6 @@ class BBDCHelpers : public D_c
 {
 protected:
     DrawRSLine* DrawRSLines;
-    _Trader parent;
 
 public:
     BBDCHelpers(){ DrawRSLines = new DrawRSLine();};

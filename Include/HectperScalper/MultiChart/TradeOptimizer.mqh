@@ -25,24 +25,26 @@ protected:
     double foundBuyTrendLines[];
     double foundSellTrendLines[];
     int orederPriceIndex;
+    stc01 providerChartRoot;
+    string extractedValue;
 
 public:
-    TradeOptimizer()
-    {
+    TradeOptimizer(){
         // ArraySetAsSeries(foundBuyTrendLines, true);
         // ArraySetAsSeries(foundSellTrendLines, true);
         // ArrayResize(foundBuyTrendLines, 0);
         // ArrayResize(foundSellTrendLines, 0);
-    }
+    };
 
-    void checkCloseTrades(_Trader &parent)
+    void optimize(_Trader &parent, stc01 &_ROOT)
     {
+        providerChartRoot = _ROOT;
         for (int i = 0; i < ArraySize(parent.openOrders); i++)
         {
             double magic = parent.openOrders[i];
             if (isTradeClosed(parent, magic))
             {
-                parent.RemoveIndexFromOpenOrdersArray(i);
+                // parent.RemoveIndexFromOpenOrdersArray(i);
             }
         }
     }
@@ -70,11 +72,9 @@ public:
                 order_price = HistoryOrderGetDouble(order_ticket, ORDER_PRICE_OPEN);
                 order_type = HistoryOrderGetInteger(order_ticket, ORDER_TYPE);
                 if (magic == custom_magic)
-                    if (StringFind(comment, "[tp") != -1 || StringFind(comment, "[sl") != -1 || StringFind(comment, "tp") != -1 || StringFind(comment, "sl") != -1)
+                    if (extractVal(comment, "[tp") || extractVal(comment, "[sl")  || extractVal(comment, "tp")  || extractVal(comment, "sl") )
                     {
-                        StringReplace(comment, "tp ", "");
-                        StringReplace(comment, "sl ", "");
-                        removeClosedTrades(parent, custom_magic, StringToDouble(comment));
+                        removeClosedTrades(parent, custom_magic, StringToDouble(extractedValue));
                         sendSignal("'trade_status':'Close','trade_ticket':" + IntegerToString(ticket) + ",'magic':" + IntegerToString(magic));
                         return true;
                     }
@@ -82,6 +82,30 @@ public:
         }
         return false;
     }
+
+    bool extractVal(string inputString, string prefix)
+    {
+        int startPos = StringFind(inputString, prefix);
+        if (startPos >= 0)
+        {
+            startPos += StringLen(prefix); // Move to the end of the prefix
+            int endPos = StringFind(inputString, "]", startPos);
+
+            if (endPos >= 0)
+            {
+                extractedValue = StringSubstr(inputString, startPos, endPos - startPos);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    };
     //+------------------------------------------------------------------+
 
     void removeClosedTrades(_Trader &parent, double custom_magic, double closed_order_price)
@@ -111,28 +135,15 @@ public:
                     {
                         won = won + 1;
                         ClosedTades = ClosedTades + 1;
-                        if (order_type == ORDER_TYPE_BUY && parent.searchArray(order_price, 1))
-                        {
-                            parent.RemoveIndexFromBuySellArray(parent.openBuyOrder, parent.getArrayIndex(ArraySize(parent.openBuyOrder), order_price, parent.openBuyOrder));
-                        }
-                        if (order_type == ORDER_TYPE_SELL && parent.searchArray(order_price, 2))
-                        {
-                            parent.RemoveIndexFromBuySellArray(parent.openSellOrder, parent.getArrayIndex(ArraySize(parent.openSellOrder), order_price, parent.openSellOrder));
-                        }
+                        Print("close triggered by tp ", parent.CurrentSymbol);
                     }
                     if (closed_order_price == order_sl)
                     {
                         loss = loss + 1;
                         ClosedTades = ClosedTades + 1;
-                        if (order_type == ORDER_TYPE_BUY && parent.searchArray(order_price, 1))
-                        {
-                            parent.RemoveIndexFromBuySellArray(parent.openBuyOrder, parent.getArrayIndex(ArraySize(parent.openBuyOrder), order_price, parent.openBuyOrder));
-                        }
-                        if (order_type == ORDER_TYPE_SELL && parent.searchArray(order_price, 2))
-                        {
-                            parent.RemoveIndexFromBuySellArray(parent.openSellOrder, parent.getArrayIndex(ArraySize(parent.openSellOrder), order_price, parent.openSellOrder));
-                        }
+                        Print("close triggered by sl ", parent.CurrentSymbol);
                     }
+                    parent.removeFromArray(parent.openOrders, custom_magic);
                 }
             }
         }
@@ -163,7 +174,7 @@ public:
     }
     //+------------------------------------------------------------------+
 
-    void modifySellTrade(_Trader &parent, double _price, double _point, string _barType, double _highest )
+    void modifySellTrade(_Trader &parent, double _price, double _point, string _barType, double _highest)
     {
         highest = _highest;
         barType = _barType;
@@ -222,8 +233,9 @@ public:
         {
             if (tradeType == 1) // Buy
             {
-                if (tradeStatus == 1){
-                     // In profit
+                if (tradeStatus == 1)
+                {
+                    // In profit
                     inProfitBuyTrade(parent, i, trendFindInt, orderPrice);
                     prevbarType = barType;
                 }
@@ -247,26 +259,26 @@ public:
 
     void inProfitBuyTrade(_Trader &parent, int i, double trendFindInt, double orderPrice)
     {
-        if (lowest > orderPrice
-        && price == lowest
-        )
-        {
-            for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
-            {
-                if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
-                {
-                    if (
-                        m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
-                    {
-                        m_trade.PositionClose(m_position.Ticket());
-                        parent.RemoveIndexFromBuySellArray(parent.openBuyOrder, orederPriceIndex);
-                        parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
-                        ClosedTades = ClosedTades + 1;
-                        won = won + 1;
-                    }
-                }
-            }
-        }
+        // if (lowest > orderPrice
+        // && price == lowest
+        // )
+        // {
+        //     for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
+        //     {
+        //         if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
+        //         {
+        //             if (
+        //                 m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
+        //             {
+        //                 m_trade.PositionClose(m_position.Ticket());
+        //                 parent.RemoveIndexFromBuySellArray(parent.openBuyOrder, orederPriceIndex);
+        //                 parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
+        //                 ClosedTades = ClosedTades + 1;
+        //                 won = won + 1;
+        //             }
+        //         }
+        //     }
+        // }
         // if (StringFind(ObjectName(0, i, 0, -1), needle, 0) > -1)
         // {
         //     double trendLinePrice = ObjectGetDouble(0, needle, OBJPROP_PRICE);
@@ -297,27 +309,27 @@ public:
 
     void notInProfitBuyTrade(_Trader &parent, int i, double trendFindInt, double orderPrice)
     {
-        for (int f = 0; f < ArraySize(foundSellTrendLines); f++)
-        {
-            if (price < orderPrice && foundSellTrendLines[f] == price)
-            {
-                for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
-                {
-                    if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
-                    {
-                        if (
-                            m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
-                        {
-                            m_trade.PositionClose(m_position.Ticket());
-                            parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
-                            parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
-                            ClosedTades = ClosedTades + 1;
-                            loss = loss + 1;
-                        }
-                    }
-                }
-            }
-        }
+        // for (int f = 0; f < ArraySize(foundSellTrendLines); f++)
+        // {
+        //     if (price < orderPrice && foundSellTrendLines[f] == price)
+        //     {
+        //         for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
+        //         {
+        //             if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
+        //             {
+        //                 if (
+        //                     m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
+        //                 {
+        //                     m_trade.PositionClose(m_position.Ticket());
+        //                     parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
+        //                     parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
+        //                     ClosedTades = ClosedTades + 1;
+        //                     loss = loss + 1;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     void inProfitSellTrade(_Trader &parent, int i, double trendFindInt, double orderPrice)
@@ -349,51 +361,51 @@ public:
         //     ObjectSetInteger(0, needle, OBJPROP_COLOR, clrDeepPink);
         //     ObjectSetInteger(0, needle, OBJPROP_WIDTH, 0);
         // }
-        if (
-            highest < orderPrice
-            && price == highest
-            )
-        {
-            for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
-            {
-                if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
-                {
-                    if (
-                        m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
-                    {
-                        m_trade.PositionClose(m_position.Ticket());
-                        parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
-                        parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
-                        ClosedTades = ClosedTades + 1;
-                        won = won + 1;
-                    }
-                }
-            }
-        }
+        // if (
+        //     highest < orderPrice
+        //     && price == highest
+        //     )
+        // {
+        //     for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
+        //     {
+        //         if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
+        //         {
+        //             if (
+        //                 m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
+        //             {
+        //                 m_trade.PositionClose(m_position.Ticket());
+        //                 parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
+        //                 parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
+        //                 ClosedTades = ClosedTades + 1;
+        //                 won = won + 1;
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     void notInProfitSellTrade(_Trader &parent, int i, double trendFindInt, double orderPrice)
     {
-        for (int f = 0; f < ArraySize(foundBuyTrendLines); f++)
-        {
-            if (price > orderPrice && foundBuyTrendLines[f] == price)
-            {
-                for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
-                {
-                    if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
-                    {
-                        if (
-                            m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
-                        {
-                            m_trade.PositionClose(m_position.Ticket());
-                            parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
-                            parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
-                            ClosedTades = ClosedTades + 1;
-                            loss = loss + 1;
-                        }
-                    }
-                }
-            }
-        }
+        // for (int f = 0; f < ArraySize(foundBuyTrendLines); f++)
+        // {
+        //     if (price > orderPrice && foundBuyTrendLines[f] == price)
+        //     {
+        //         for (int u = PositionsTotal() - 1; u >= 0; u--) // returns the number of current positions
+        //         {
+        //             if (m_position.SelectByIndex(u)) // selects the position by index for further access to its properties
+        //             {
+        //                 if (
+        //                     m_position.Symbol() == parent.CurrentSymbol && parent.searchArray(m_position.Magic(), 5) && m_position.PriceOpen() == orderPrice)
+        //                 {
+        //                     m_trade.PositionClose(m_position.Ticket());
+        //                     parent.RemoveIndexFromBuySellArray(parent.openSellOrder, orederPriceIndex);
+        //                     parent.RemoveIndexFromOpenOrdersArray(parent.getArrayIndex(ArraySize(parent.openOrders), m_position.Magic(), parent.openOrders));
+        //                     ClosedTades = ClosedTades + 1;
+        //                     loss = loss + 1;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 };
