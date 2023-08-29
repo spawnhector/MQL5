@@ -22,6 +22,8 @@ struct chartObjects
     double startPrice;
     double endPrice;
     datetime time;
+    double support;
+    double resistance;
 } __COB;
 
 struct stc01
@@ -47,6 +49,7 @@ struct stc01
     long BBOBVolume;
     bool breakoutFound;
     bool reverseBreakoutFound;
+    bool toUpdate;
     struct trader
     {
         int type;
@@ -110,6 +113,25 @@ struct ChartObjects
             return FIBO_LEVELS_TYPE[_ty].LEVELS[level].price;
         };
     } FIBO_RET;
+
+    struct BreakOut_Levels
+    {
+        string _name;
+        void Draw(AppValues lineType, datetime time, double level)
+        {
+            _name = "BB-Plot-" + DCID.symbol + "-" + EnumToString(lineType);
+            ;
+            ObjectCreate(DCID.chartID, _name, OBJ_HLINE, 0, time, level);
+            ObjectSetInteger(DCID.chartID, _name, OBJPROP_COLOR, clrBlue);
+        };
+
+        void AddBreakOut_Levels(double support, double resistance, datetime time)
+        {
+            Print("adding break out level");
+            Draw(SUPPORTLINE, time, support);
+            Draw(RESISTANCELINE, time, resistance);
+        };
+    } BREAKOUT_LEVELS;
 } DCOB;
 
 struct InterfaceHandler
@@ -117,18 +139,25 @@ struct InterfaceHandler
     string id;
     void update(stc01 &_RT)
     {
-        for (int i = 0; i < ArraySize(_RT.__COBS); i++)
+        if(_RT.toUpdate) if (DCID.symbol == _RT.symbol)
         {
-            if (DCID.symbol == _RT.symbol)
+            for (int i = 0; i < ArraySize(_RT.__COBS); i++)
             {
                 switch (_RT.__COBS[i].name)
                 {
                 case FIBO_RET:
                     DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
                     break;
+                case BREAKOUT_LEVELS:
+                    DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
+                    break;
                 }
             }
+            _RT.toUpdate = false;
         }
+    };
+    void removeObject(){
+
     };
 } InterfaceRoot;
 

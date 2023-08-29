@@ -23,10 +23,7 @@ public:
     chartindex = _chartindex;
     ProviderIndex = _providerindex;
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
-    _INTERFACE = _PROVIDERS[ProviderIndex].getChartInterface();
-    _DC = _INTERFACE.getChartAnalizer();
-    _DC.analyzeChart(this);
-    _SDCS[chartindex].DCS[ProviderIndex] = _DC;
+    checkChart();
   };
 
   ~BotInstance(){
@@ -59,6 +56,13 @@ public:
     }
   };
 
+  void checkChart(){
+    _INTERFACE = _PROVIDERS[ProviderIndex].getChartInterface();
+    _DC = _INTERFACE.getChartAnalizer();
+    _DC.analyzeChart(this);
+    _SDCS[chartindex].DCS[ProviderIndex] = _DC;
+  };
+  
 private:
   datetime Time0;
   bool bNewBar() // new bar

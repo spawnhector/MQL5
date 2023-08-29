@@ -34,6 +34,12 @@ public:
         ROOT.SupportLevel = DrawRSLines.rangeLow;
         ROOT.ResistanceLevel = DrawRSLines.rangeHigh;
         ROOT.rangeTime = DrawRSLines.rangeTime;
+        __COB.name = BREAKOUT_LEVELS;
+        __COB.support = ROOT.SupportLevel;
+        __COB.resistance = ROOT.ResistanceLevel;
+        __COB.time = ROOT.rangeTime;
+        this.addRootObject(__COB);
+        ROOT.toUpdate = true;
     };
 
     void CheckPriceBreakOut(_Trader &_prnt)
@@ -119,9 +125,9 @@ public:
             __COB.name = FIBO_RET;
             __COB.startPrice = startPrice;
             __COB.endPrice = endPrice;
-            // __COB.time = iTime(parent.CurrentSymbol, PERIOD_M1, parent.previousBar);
             __COB.time = ROOT.rangeTime;
             this.addRootObject(__COB);
+            ROOT.toUpdate = true;
             this.switchTradeType(levelType);
         }
     };

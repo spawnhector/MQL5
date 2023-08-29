@@ -208,8 +208,6 @@ public:
 
     void PlotBB()
     {
-        string objectName = "BB-Plot-" + DCID.symbol + "Start";
-        // PlaceVerticalLine(DCID.startBar.time, objectName, clrHotPink);
         IdentifySupportResistanceLevels();
     }
 

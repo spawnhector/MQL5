@@ -6,7 +6,8 @@ enum AppValues{
 };
 
 enum DCObjects{
-    FIBO_RET
+    FIBO_RET,
+    BREAKOUT_LEVELS
 };
 
 enum DCOBJ_PROP{
