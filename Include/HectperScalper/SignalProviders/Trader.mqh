@@ -37,20 +37,20 @@ public:
 
     virtual void _SetState()
     {
-        if (ArraySize(prevFoundHigh) > MAX_CANDELS)
-        {
-            ArrayFree(prevFoundHigh);
-        }
-        if (ArraySize(prevFoundLow) > MAX_CANDELS)
-        {
-            ArrayFree(prevFoundLow);
-        }
-        ArrayFree(candels);
-        ArrayFree(closes);
-        if (ObjectsTotal(0, 0, -1) > MAX_CANDELS)
-        {
-            ObjectsDeleteAll(0, 0, -1);
-        }
+        // if (ArraySize(prevFoundHigh) > MAX_CANDELS)
+        // {
+        //     ArrayFree(prevFoundHigh);
+        // }
+        // if (ArraySize(prevFoundLow) > MAX_CANDELS)
+        // {
+        //     ArrayFree(prevFoundLow);
+        // }
+        // ArrayFree(candels);
+        // ArrayFree(closes);
+        // if (ObjectsTotal(0, 0, -1) > MAX_CANDELS)
+        // {
+        //     ObjectsDeleteAll(0, 0, -1);
+        // }
     }
 
     void _Trade(stc01 &chartData)

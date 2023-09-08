@@ -36,13 +36,13 @@ public:
     };
 
     void optimize(_Trader &parent, stc01 &_ROOT, D_c &sub_parent)
-    {   
+    {
         for (int i = 0; i < ArraySize(parent.openOrders); i++)
         {
             double magic = parent.openOrders[i];
-            if (isTradeClosed(parent, magic,sub_parent))
+            if (isTradeClosed(parent, magic, sub_parent))
             {
-                // parent.RemoveIndexFromOpenOrdersArray(i);
+                cleanUpBot(parent, magic, sub_parent);
             }
         }
     }
@@ -70,11 +70,13 @@ public:
                 order_price = HistoryOrderGetDouble(order_ticket, ORDER_PRICE_OPEN);
                 order_type = HistoryOrderGetInteger(order_ticket, ORDER_TYPE);
                 if (magic == custom_magic)
-                    if (extractVal(comment, "[tp") || extractVal(comment, "[sl")  || extractVal(comment, "tp")  || extractVal(comment, "sl") )
+                    if (extractVal(comment, "[tp") || extractVal(comment, "[sl") || extractVal(comment, "tp") || extractVal(comment, "sl"))
                     {
-                        removeClosedTrades(parent, custom_magic, StringToDouble(extractedValue),sub_parent);
-                        sendSignal("'trade_status':'Close','trade_ticket':" + IntegerToString(ticket) + ",'magic':" + IntegerToString(magic));
-                        return true;
+                        if (removeClosedTrades(parent, custom_magic, StringToDouble(extractedValue), sub_parent))
+                        {
+                            sendSignal("'trade_status':'Close','trade_ticket':" + IntegerToString(ticket) + ",'magic':" + IntegerToString(magic));
+                            return true;
+                        };
                     }
             }
         }
@@ -106,7 +108,7 @@ public:
     };
     //+------------------------------------------------------------------+
 
-    void removeClosedTrades(_Trader &parent, double custom_magic, double closed_order_price, D_c &sub_parent)
+    bool removeClosedTrades(_Trader &parent, double custom_magic, double closed_order_price, D_c &sub_parent)
     {
         HistorySelect(algoStartTime, TimeCurrent());
         uint total = HistoryOrdersTotal();
@@ -135,20 +137,22 @@ public:
                     {
                         won = won + 1;
                         ClosedTades = ClosedTades + 1;
-                        cleanUpBot(parent,custom_magic,sub_parent);
+                        return true;
                     }
                     if (closed_order_price == order_sl)
                     {
                         loss = loss + 1;
                         ClosedTades = ClosedTades + 1;
-                        cleanUpBot(parent,custom_magic,sub_parent);
+                        return true;
                     }
                 }
             }
         }
+        return false;
     };
 
-    void cleanUpBot(_Trader &parent, double custom_magic, D_c &sub_parent){
+    void cleanUpBot(_Trader &parent, double custom_magic, D_c &sub_parent)
+    {
         parent.removeFromArray(parent.openOrders, custom_magic);
         sub_parent.reAnalyzeChart(parent);
     };
