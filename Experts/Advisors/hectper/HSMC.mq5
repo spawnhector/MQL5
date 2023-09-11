@@ -34,27 +34,31 @@ int OnInit()
     Print("Automated trading is currently disabled. Please enable automated trading to use this Expert Advisor.");
     return INIT_FAILED;
   }
-
-  if (isTestAccount)
+  if (__chartSymbol.setSymbols(user00) && __chartSymbol.loadSymbols())
   {
-    addToArray(selectedProviders, 1);
-    strat_trade = true;
-    startButtonClicked = true;
-  }
+    if (isTestAccount)
+    {
+      addToArray(selectedProviders, 1);
+      strat_trade = true;
+      startButtonClicked = true;
+    }
 
-  if (enableServer)
-  {
-    if (ConnectServer())
-      return INIT_SUCCEEDED;
-    return INIT_FAILED;
-  }
+    if (enableServer)
+    {
+      if (ConnectServer())
+        return INIT_SUCCEEDED;
+      return INIT_FAILED;
+    }
 
-  Signals = new SignalProvider();
-  CreateCharts();
-  CreateInstances();
-  if (bInterfaceE)
-    CreateSimpleInterface();
-  return (INIT_SUCCEEDED);
+    Signals = new SignalProvider();
+    CreateCharts();
+    CreateInstances();
+    if (bInterfaceE)
+      CreateSimpleInterface();
+    return (INIT_SUCCEEDED);
+  }
+  Print("Failed to add symbols.");
+  return INIT_FAILED;
 }
 
 //+------------------------------------------------------------------+
@@ -73,6 +77,7 @@ void OnDeinit(const int reason)
   for (int j = 0; j < ArraySize(Bots); j++)
     delete Bots[j];
 
+// Print("test ",ArraySize(_SDCS));
   for (int j = 0; j < ArraySize(_SDCS); j++)
   {
     for (int i = 0; i < ArraySize(_SDCS[j].DCS); i++)

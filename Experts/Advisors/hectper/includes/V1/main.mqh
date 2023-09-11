@@ -1,4 +1,3 @@
-
 #include "..\..\..\..\..\Include\HectperScalper\SignalProviders\CustomEvent\BBCustomEvent.mqh";
 #include <HectperScalper\SignalProviders\enums.mqh>;
 #include <HectperScalper\SignalProviders\structs.mqh>;
@@ -19,9 +18,6 @@
 #include <HectperScalper\AppInterface\InterfaceEvents.mqh>;
 #include <HectperScalper\MultiChart\StringToPeriod.mqh>;
 #include <HectperScalper\MultiChart\StringToDoubleP.mqh>;
-#include <HectperScalper\MultiChart\ConstructArrays.mqh>;
-#include <HectperScalper\MultiChart\ConstructLots.mqh>;
-#include <HectperScalper\MultiChart\ConstructTimeframe.mqh>;
 #include <HectperScalper\MultiChart\CreateCharts.mqh>;
 #include <HectperScalper\MultiChart\CreateInstances.mqh>;
 #include <HectperScalper\MultiChart\ticks.mqh>;

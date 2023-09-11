@@ -93,6 +93,7 @@ void ConstructArrays()//construct the necessary arrays
          {
          CN[i]=LastBars;
          }
+         // ArrayPrint(CN);
       ConstructLots();
       ConstructTimeframe();         
    }

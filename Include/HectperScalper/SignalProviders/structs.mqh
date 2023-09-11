@@ -26,6 +26,26 @@ struct chartObjects
     double resistance;
 } __COB;
 
+struct stA0
+{
+    long ID;
+    int Width,
+        Height,
+        SubWin;
+} m_terminal_Infos;
+
+struct stA1
+{
+    color CorBackGround,
+        CorSymbol;
+    int nSymbols,
+        MaxPositionX;
+    struct st01
+    {
+        string szCode;
+    } Symbols[];
+} m_widget_Infos;
+
 struct stc01
 {
     bool analyzing;
@@ -76,7 +96,7 @@ struct ChartObjects
 
         void Draw(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
-            _name = "BB-Plot-" + DCID.symbol +"_Fibonacci_" + EnumToString(nameCat);
+            _name = "BB-Plot-" + DCID.symbol + "_Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
             double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
             int fiboSize = ArraySize(FibonacciLevels);
@@ -137,7 +157,7 @@ struct InterfaceHandler
     bool toUpdate;
     void update(stc01 &_RT)
     {
-        if (toUpdate)        
+        if (toUpdate)
             if (DCID.symbol == _RT.symbol)
             {
                 for (int i = 0; i < ArraySize(_RT.__COBS); i++)
@@ -145,7 +165,8 @@ struct InterfaceHandler
                     switch (_RT.__COBS[i].name)
                     {
                     case FIBO_RET:
-                        DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
+                        Print("test ", _RT.trade.open);
+                        // DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
                         break;
                     case BREAKOUT_LEVELS:
                         DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
@@ -156,7 +177,8 @@ struct InterfaceHandler
             }
     };
 
-    void removeObject(stc01 &root){
+    void removeObject(stc01 &root)
+    {
         ArrayFree(root.__COBS);
         ObjectsDeleteAll(DCID.chartID, "BB-Plot-" + root.symbol);
     };
@@ -186,11 +208,86 @@ struct DCInterfaceData
 struct ChartSymbol
 {
     string isSet;
+    string fileName;
+    string szFileConfig;
+    int symbolLength;
+    string Symbols[];
+    
+    bool writeFile(int fileHandle)
+    {
+        int totalSymbols = SymbolsTotal(false);
+        for (int i = 0; i < totalSymbols; i++)
+        {
+            string symbolName = SymbolName(i, false); // Get the symbol name
+            FileWrite(fileHandle, symbolName);        // Write the symbol name to the file
+            symbolLength = symbolLength + 1;
+        }
+        FileClose(fileHandle);
+        return true;
+    };
+
+    bool setSymbols(string _szFileConfig)
+    {
+        int file;
+        string sz0;
+        szFileConfig = _szFileConfig;
+        fileName = "Widget\\" + szFileConfig;
+        string terminal_data_path = TerminalInfoString(TERMINAL_DATA_PATH);
+        if ((file = FileOpen(fileName, FILE_WRITE)) != INVALID_HANDLE)
+        {
+            return writeFile(file);
+        }
+        Print("error writing config file");
+        return false;
+    };
+
+    void AddSymbol(string sym)
+    {
+        ArrayResize(Symbols, (ArraySize(Symbols) + 1));
+        Symbols[ArraySize(Symbols) - 1] = sym;
+    };
+
+    bool loadSymbols()
+    {
+        int file;
+        string sz0;
+        bool ret;
+        string terminal_data_path = TerminalInfoString(TERMINAL_DATA_PATH);
+
+        if (FileIsExist(fileName, 0))
+        {
+            if ((file = FileOpen(fileName, FILE_CSV | FILE_READ | FILE_ANSI)) == INVALID_HANDLE)
+            {
+                PrintFormat("%s configuration file not found.", szFileConfig);
+                return false;
+            }
+            m_widget_Infos.nSymbols = 0;
+            ArrayResize(m_widget_Infos.Symbols, symbolLength);
+            for (int c0 = 1; (!FileIsEnding(file)) && (!_StopFlag); c0++)
+            {
+                if ((sz0 = FileReadString(file)) == "")
+                    continue;
+                if (SymbolExist(sz0, ret)){
+                    AddSymbol(sz0);
+                }
+                else
+                {
+                    FileClose(file);
+                    PrintFormat("Asset on line %d was not recognized.", c0);
+                    return false;
+                }
+            }
+            FileClose(file);
+            return true;
+        }
+        return false;
+    };
+
     int symbolIndex(string sym)
     {
-        for (int i = 0; i < ArraySize(S); i++)
+        for (int i = 0; i < ArraySize(Symbols); i++)
         {
-            if (S[i] == sym)
+            if (Symbols[i] == sym)
                 return i;
         }
         return -1;
