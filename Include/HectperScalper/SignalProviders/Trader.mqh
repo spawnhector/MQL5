@@ -71,6 +71,8 @@ public:
                 chartData.trade.open = true;
                 ulong Ticket = m_trade.ResultOrder();
                 addOpenOrder(mag);
+            }else{
+                Print("error placing trade");
             }
         }
     };

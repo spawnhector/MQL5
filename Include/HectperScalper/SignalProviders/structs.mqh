@@ -212,14 +212,28 @@ struct ChartSymbol
     int symbolLength;
     string Symbols[];
     
+    bool IsTradeAllowed(string symbol)
+    {
+        m_symbolinfo.Name(symbol);
+        ENUM_SYMBOL_TRADE_MODE trade_disabled = m_symbolinfo.TradeMode();
+        if (trade_disabled == 4)
+        {
+            return true;
+        }
+        return false;
+    };
+
     bool writeFile(int fileHandle)
     {
         int totalSymbols = SymbolsTotal(false);
         for (int i = 0; i < totalSymbols; i++)
         {
             string symbolName = SymbolName(i, false); // Get the symbol name
-            FileWrite(fileHandle, symbolName);        // Write the symbol name to the file
-            symbolLength = symbolLength + 1;
+            if (IsTradeAllowed(symbolName) == true)
+            {
+                FileWrite(fileHandle, symbolName); // Write the symbol name to the file
+                symbolLength = symbolLength + 1;
+            }
         }
         FileClose(fileHandle);
         return true;
@@ -266,7 +280,8 @@ struct ChartSymbol
             {
                 if ((sz0 = FileReadString(file)) == "")
                     continue;
-                if (SymbolExist(sz0, ret)){
+                if (SymbolExist(sz0, ret))
+                {
                     AddSymbol(sz0);
                 }
                 else

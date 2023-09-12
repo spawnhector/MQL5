@@ -11,7 +11,8 @@
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
-
+#include <Trade\SymbolInfo.mqh>
+CSymbolInfo m_symbolinfo;
 #include <Trade\PositionInfo.mqh>
 #include <Trade\Trade.mqh>
 CPositionInfo m_position; // trade position object
