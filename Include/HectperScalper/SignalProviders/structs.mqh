@@ -165,8 +165,7 @@ struct InterfaceHandler
                     switch (_RT.__COBS[i].name)
                     {
                     case FIBO_RET:
-                        Print("test ", _RT.trade.open);
-                        // DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
+                        DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
                         break;
                     case BREAKOUT_LEVELS:
                         DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);

@@ -77,7 +77,6 @@ void OnDeinit(const int reason)
   for (int j = 0; j < ArraySize(Bots); j++)
     delete Bots[j];
 
-// Print("test ",ArraySize(_SDCS));
   for (int j = 0; j < ArraySize(_SDCS); j++)
   {
     for (int i = 0; i < ArraySize(_SDCS[j].DCS); i++)

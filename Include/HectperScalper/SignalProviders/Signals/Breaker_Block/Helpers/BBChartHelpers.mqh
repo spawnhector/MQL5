@@ -8,7 +8,7 @@ public:
     int sl;
     int tp;
     BBChartHelpers(){
-        sl = 5;
+        sl = 3;
         tp = 7;
     };
     ~BBChartHelpers(){};
