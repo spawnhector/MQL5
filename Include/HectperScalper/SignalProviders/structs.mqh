@@ -97,7 +97,7 @@ struct ChartObjects
         {
             _name = "BB-Plot-" + DCID.symbol + "_Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
-            double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
+            double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618, 3.618, 4.618, 5.618, 6.618, 7.618, 8.618, 9.618, 10.618};
             fiboSize = ArraySize(FibonacciLevels);
             ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS, fiboSize);
             ObjectDelete(DCID.chartID, _name);

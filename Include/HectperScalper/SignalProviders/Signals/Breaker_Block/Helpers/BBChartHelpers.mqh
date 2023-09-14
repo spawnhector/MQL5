@@ -46,7 +46,7 @@ public:
     {
         if (_prnt.PriceBid < ROOT.SupportLevel)
             this.checkVolume(_prnt, SUPPORTLINE, true);
-        if (ROOT.SupportLevelPassed && _prnt.PriceAsk > ROOT.SupportLevel)
+        if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
             this.unCheckVolume(_prnt, SUPPORTLINE, false);
         if (_prnt.PriceBid > ROOT.ResistanceLevel)
             this.checkVolume(_prnt, RESISTANCELINE, true);
@@ -181,6 +181,8 @@ public:
         {
             if (!profitInRange(_prnt, _tp))
                 calculateTPSL(_prnt, _tp + 1);
+        }else{
+            // DCOB.FIBO_RET.
         };
     };
 }
