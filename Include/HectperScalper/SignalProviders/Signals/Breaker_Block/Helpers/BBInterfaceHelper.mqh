@@ -14,12 +14,12 @@ class BBInterfaceHelper : public BBDCInterfaceHelpers
 public:
     BBInterfaceHelper() : BBDCInterfaceHelpers()
     {
-    }
+    };
 
     DCInterfaceData GetInterfaceData() const override
     {
         return DCID;
-    }
+    };
 
     void IdentifySupportResistanceLevels()
     {
@@ -50,7 +50,7 @@ public:
         // objectName = "BB-Plot-" + DCID.symbol + "-ResistanceLevel";
         // ObjectCreate(DCID.chartID, objectName, OBJ_HLINE, 0, DCID.rangeTime, DCID.ResistanceLevel);
         // ObjectSetInteger(DCID.chartID, objectName, OBJPROP_COLOR, clrBlue);
-    }
+    };
 
     int GetBarIndexByTime(const datetime &targetTime)
     {

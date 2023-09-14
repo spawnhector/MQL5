@@ -26,7 +26,7 @@ public:
         {
             Print("Failed to retrieve price data for the specified range.");
             return;
-        }
+        };
         rangeLow = rates[0].low;
         rangeHigh = rates[0].high;
         rangeTime = rates[0].time;
@@ -37,15 +37,15 @@ public:
             {
                 rangeLow = rates[i].low;
                 rangeTime = rates[i].time;
-            }
+            };
 
             if (rates[i].high > rangeHigh)
             {
                 rangeHigh = rates[i].high;
                 rangeTime = rates[i].time;
-            }
-        }
-    }
+            };
+        };
+    };
 };
 
 

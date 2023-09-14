@@ -4,11 +4,13 @@ class BBChartAnalyzer : public BBChartHelpers
 {
 public:
     TradeOptimizer *Optimizer;
-    BBChartAnalyzer(ProviderData &_providerData) : BBChartHelpers() {
+    BBChartAnalyzer(ProviderData &_providerData) : BBChartHelpers()
+    {
         Optimizer = new TradeOptimizer();
         providerData = _providerData;
     };
-    ~BBChartAnalyzer() {
+    ~BBChartAnalyzer()
+    {
         delete Optimizer;
     };
 
@@ -28,20 +30,25 @@ public:
         ROOT.trade.open = false;
     };
 
-    void OnTick(_Trader &_parent) override{
+    void OnTick(_Trader &_parent) override
+    {
         CheckPriceBreakOut(_parent);
-        if (ROOT.reverseBreakoutFound) _parent._Trade(ROOT);
+        if (ROOT.reverseBreakoutFound)
+            _parent._Trade(ROOT);
     };
 
-    void OnTestTick(_Trader &_parent) override{
+    void OnTestTick(_Trader &_parent) override
+    {
         _parent._TestTrade(ROOT);
     };
 
-    void UpdateInterface() override{
+    void UpdateInterface() override
+    {
         DCID.root.update(ROOT);
     };
 
-    void Optimize(_Trader &_parent) override{
-        Optimizer.optimize(_parent,ROOT,this);
+    void Optimize(_Trader &_parent) override
+    {
+        Optimizer.optimize(_parent, ROOT, this);
     };
 };

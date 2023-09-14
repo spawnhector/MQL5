@@ -54,15 +54,18 @@ public:
         if (!chartData.trade.open)
         {
             bool ___trade;
+            bool hasMargin;
             int mag = GetMagicF();
             m_trade.SetExpertMagicNumber(mag);
             switch (chartData.trade.type)
             {
             case BUY:
-                ___trade = m_trade.Buy(0.10, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                hasMargin = __chartSymbol.hasEnoughMargin(BUY,chartData.symbol,chartData.BOBVolume,PriceBid);
+                if(hasMargin)___trade = m_trade.Buy(0.10, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             case SELL:
-                ___trade = m_trade.Sell(0.10, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                hasMargin = __chartSymbol.hasEnoughMargin(SELL,chartData.symbol,chartData.BOBVolume,PriceBid);
+                if(hasMargin)___trade = m_trade.Sell(0.10, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             }
             if (___trade)
@@ -71,8 +74,6 @@ public:
                 chartData.trade.open = true;
                 ulong Ticket = m_trade.ResultOrder();
                 addOpenOrder(mag);
-            }else{
-                Print("error placing trade");
             }
         }
     };

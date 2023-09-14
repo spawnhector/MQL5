@@ -5,11 +5,12 @@ class BBChartHelpers : public BBDCHelpers
 public:
     double startPrice;
     double endPrice;
-    int sl;
     int tp;
-    BBChartHelpers(){
-        sl = 5;
-        tp = 6;
+    double cl;
+
+    BBChartHelpers()
+    {
+        tp = 3;
     };
     ~BBChartHelpers(){};
 
@@ -44,13 +45,13 @@ public:
     void CheckPriceBreakOut(_Trader &_prnt)
     {
         if (_prnt.PriceBid < ROOT.SupportLevel)
-            this.checkVolume(_prnt,SUPPORTLINE, true);
+            this.checkVolume(_prnt, SUPPORTLINE, true);
         if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
-            this.unCheckVolume(_prnt,SUPPORTLINE, false);
+            this.unCheckVolume(_prnt, SUPPORTLINE, false);
         if (_prnt.PriceBid > ROOT.ResistanceLevel)
-            this.checkVolume(_prnt,RESISTANCELINE, true);
+            this.checkVolume(_prnt, RESISTANCELINE, true);
         if (ROOT.ResistanceLevelPassed && _prnt.PriceBid < ROOT.ResistanceLevel)
-            this.unCheckVolume(_prnt,RESISTANCELINE, false);
+            this.unCheckVolume(_prnt, RESISTANCELINE, false);
     };
 
     void switchLevelType(int levelType, bool typeVal) // level type: SUPPORTLINE support(low), RESISTANCELINE resistance(high)
@@ -92,7 +93,7 @@ public:
         }
     };
 
-    void isRBOFound(int levelType)
+    void isRBOFound(_Trader &_prnt, int levelType)
     {
         switch (levelType)
         {
@@ -103,8 +104,7 @@ public:
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
-                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, sl);
-                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, tp);
+                calculateTPSL(_prnt, tp);
             }
             break;
         case RESISTANCELINE:
@@ -114,8 +114,7 @@ public:
                 startPrice = ROOT.ResistanceLevel;
                 endPrice = ROOT.SupportLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
-                ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, sl);
-                ROOT.trade.tp = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, tp);
+                calculateTPSL(_prnt, tp);
             }
             break;
         }
@@ -130,7 +129,7 @@ public:
         }
     };
 
-    void checkVolume(_Trader &_prnt,int levelType, bool typeVal)
+    void checkVolume(_Trader &_prnt, int levelType, bool typeVal)
     {
         this.switchLevelType(levelType, typeVal);
         if (!ROOT.volumeChecked)
@@ -141,13 +140,50 @@ public:
             if (!ROOT.breakoutFound)
                 this.isBOFound(levelType);
             if (ROOT.breakoutFound)
-                this.isRBOFound(levelType);
+                this.isRBOFound(_prnt, levelType);
         }
     };
 
-    void unCheckVolume(_Trader &_prnt,int levelType, bool typeVal)
+    void unCheckVolume(_Trader &_prnt, int levelType, bool typeVal)
     {
         this.switchLevelType(levelType, typeVal);
         ROOT.volumeChecked = false;
+    };
+
+    bool checkProfit(double _profit, int _tp)
+    {
+        if (_profit > 0.00)
+        {
+            ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, _tp - 2);
+            ROOT.trade.tp = cl;
+            return true;
+        }
+        return false;
+    };
+
+    bool profitInRange(_Trader &_prnt, int _tp)
+    {
+        cl = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, _tp);
+        if (ROOT.trade.type == BUY)
+        {
+            return checkProfit((cl - _prnt.PriceBid) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+        }
+        else if (ROOT.trade.type == SELL)
+        {
+            return checkProfit((_prnt.PriceBid - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+        }
+        return false;
+    };
+
+    void calculateTPSL(_Trader &_prnt, int _tp)
+    {
+        if (_tp < DCOB.FIBO_RET.fiboSize)
+            if (profitInRange(_prnt, _tp))
+            {
+            }
+            else
+            {
+                calculateTPSL(_prnt, _tp + 1);
+            }
     };
 }

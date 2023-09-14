@@ -44,7 +44,6 @@ public:
     _point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
     // _SDCS[chartindex].DCS[ProviderIndex].OnTestTick(this);
     _SDCS[chartindex].DCS[ProviderIndex].Optimize(this);
-
     if (strat_trade && bNewBar())
     {
       _SetState();

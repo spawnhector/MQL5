@@ -1,5 +1,3 @@
-
-string S[]; // array with symbols
 struct StartBar
 {
     int barIndex;
@@ -85,6 +83,7 @@ struct ChartObjects
     {
         string _name;
         string levelObjName;
+        int fiboSize;
 
         struct Fibo_Levels_Type
         {
@@ -99,7 +98,7 @@ struct ChartObjects
             _name = "BB-Plot-" + DCID.symbol + "_Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
             double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618};
-            int fiboSize = ArraySize(FibonacciLevels);
+            fiboSize = ArraySize(FibonacciLevels);
             ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS, fiboSize);
             ObjectDelete(DCID.chartID, _name);
             for (int i = 1; i < fiboSize; i++)
@@ -211,7 +210,8 @@ struct ChartSymbol
     string szFileConfig;
     int symbolLength;
     string Symbols[];
-    
+    MqlBookInfo marketInfo[];
+
     bool IsTradeAllowed(string symbol)
     {
         m_symbolinfo.Name(symbol);
@@ -305,5 +305,33 @@ struct ChartSymbol
                 return i;
         }
         return -1;
+    };
+
+    double CalculateMarginRequired(double lotSize, double leverage, string symbol)
+    {
+        double marginRequired = lotSize * SymbolInfoDouble(symbol, SYMBOL_MARGIN_INITIAL) / leverage;
+        return marginRequired;
+    };
+
+    bool hasEnoughMargin(AppValues type, string sym, long vol, double pri)
+    {
+        double margin;
+        bool res;
+        switch (type)
+        {
+        case BUY:
+            res = OrderCalcMargin(ORDER_TYPE_BUY, sym, vol, pri, margin);
+            if (res)
+                if (AccountInfoDouble(ACCOUNT_BALANCE) >= (margin / AccountInfoInteger(ACCOUNT_LEVERAGE)))
+                    return true;
+            break;
+        case SELL:
+            res = OrderCalcMargin(ORDER_TYPE_SELL, sym, vol, pri, margin);
+            if (res)
+                if (AccountInfoDouble(ACCOUNT_BALANCE) >= (margin / AccountInfoInteger(ACCOUNT_LEVERAGE)))
+                    return true;
+            break;
+        }
+        return false;
     };
 } __chartSymbol;
