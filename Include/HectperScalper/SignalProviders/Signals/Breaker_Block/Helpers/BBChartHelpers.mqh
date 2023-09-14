@@ -46,7 +46,7 @@ public:
     {
         if (_prnt.PriceBid < ROOT.SupportLevel)
             this.checkVolume(_prnt, SUPPORTLINE, true);
-        if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
+        if (ROOT.SupportLevelPassed && _prnt.PriceAsk > ROOT.SupportLevel)
             this.unCheckVolume(_prnt, SUPPORTLINE, false);
         if (_prnt.PriceBid > ROOT.ResistanceLevel)
             this.checkVolume(_prnt, RESISTANCELINE, true);
@@ -170,20 +170,17 @@ public:
         }
         else if (ROOT.trade.type == SELL)
         {
-            return checkProfit((_prnt.PriceBid - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+            return checkProfit((_prnt.PriceAsk - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
         }
         return false;
     };
 
     void calculateTPSL(_Trader &_prnt, int _tp)
     {
-        if (_tp < DCOB.FIBO_RET.fiboSize)
-            if (profitInRange(_prnt, _tp))
-            {
-            }
-            else
-            {
+        if (_tp < (DCOB.FIBO_RET.fiboSize - 1))
+        {
+            if (!profitInRange(_prnt, _tp))
                 calculateTPSL(_prnt, _tp + 1);
-            }
+        };
     };
 }
