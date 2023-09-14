@@ -44,9 +44,9 @@ public:
 
     void CheckPriceBreakOut(_Trader &_prnt)
     {
-        if (_prnt.PriceBid < ROOT.SupportLevel)
+        if (_prnt.PriceAsk < ROOT.SupportLevel)
             this.checkVolume(_prnt, SUPPORTLINE, true);
-        if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
+        if (ROOT.SupportLevelPassed && _prnt.PriceAsk > ROOT.SupportLevel)
             this.unCheckVolume(_prnt, SUPPORTLINE, false);
         if (_prnt.PriceBid > ROOT.ResistanceLevel)
             this.checkVolume(_prnt, RESISTANCELINE, true);
@@ -166,11 +166,15 @@ public:
         cl = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, _tp);
         if (ROOT.trade.type == BUY)
         {
-            return checkProfit((cl - _prnt.PriceBid) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+            bool prof = checkProfit((cl - _prnt.PriceBid) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+        Print(_prnt.CurrentSymbol+" ",prof);
+            return prof;
         }
         else if (ROOT.trade.type == SELL)
         {
-            return checkProfit((_prnt.PriceAsk - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+            bool prof = checkProfit((_prnt.PriceAsk - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
+        Print(_prnt.CurrentSymbol+" ",prof);
+            return prof;
         }
         return false;
     };
