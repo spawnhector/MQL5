@@ -45,6 +45,8 @@ public:
         else
         {
             ChartSetInteger(DCID.chartID, CHART_SHOW_GRID, false);
+            ChartSetInteger(DCID.chartID, CHART_SHIFT, true);
+            ChartSetInteger(DCID.chartID, CHART_SCALE, 2);
             // DrawRectangles();
             AddVolumeIndicator();
             addCustomIndicator();

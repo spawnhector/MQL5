@@ -16,7 +16,7 @@ public:
     virtual ProviderData GetProviderData() const = 0;
     virtual void OnTick(_Trader &_parent){};
     virtual void OnTestTick(_Trader &_parent){};
-    virtual void UpdateInterface(){};
+    virtual void UpdateInterface(_Trader &_parent){};
     virtual void Optimize(_Trader &_parent){};
     virtual void analyzeChart(_Trader &_parent){};
     virtual void reAnalyzeChart(_Trader &_parent){};

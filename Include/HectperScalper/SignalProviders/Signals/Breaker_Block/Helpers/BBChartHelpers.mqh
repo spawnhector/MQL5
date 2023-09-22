@@ -31,7 +31,7 @@ public:
 
     void IdentifySupportResistanceLevels(_Trader &_prnt)
     {
-        DrawRSLines.plot((string)_prnt.CurrentSymbol, Period());
+        DrawRSLines.plot((string)_prnt.CurrentSymbol, PERIOD_M1);
         ROOT.SupportLevel = DrawRSLines.rangeLow;
         ROOT.ResistanceLevel = DrawRSLines.rangeHigh;
         ROOT.rangeTime = DrawRSLines.rangeTime;
@@ -103,7 +103,7 @@ public:
             {
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
             break;
@@ -113,7 +113,7 @@ public:
             {
                 startPrice = ROOT.ResistanceLevel;
                 endPrice = ROOT.SupportLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(startPrice, endPrice, DCID.rangeTime, _HIDE);
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
             break;
@@ -150,11 +150,11 @@ public:
         ROOT.volumeChecked = false;
     };
 
-    bool checkProfit(double _profit, int _tp)
+    bool checkProfit(_Trader &_prnt, double _profit, int _tp, DCOBJ_PROP _ty)
     {
-        if (_profit > 0.00)
+        if (_profit > 0.01)
         {
-            ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(_START, _tp - 2);
+            ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _ty, _tp - 2);
             ROOT.trade.tp = cl;
             return true;
         }
@@ -163,18 +163,28 @@ public:
 
     bool profitInRange(_Trader &_prnt, int _tp)
     {
-        cl = DCOB.FIBO_RET.GetFiboLevel(_REVERSE, _tp);
-        if (ROOT.trade.type == BUY)
+        double TickValue = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_VALUE);
+        double TickSize = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_SIZE);
+        double lots = 0.05;
+        cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), (ROOT.trade.type == BUY ? _REVERSE : _START), _tp);
+        switch (ROOT.trade.type)
         {
-            bool prof = checkProfit((cl - _prnt.PriceBid) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
-        Print(_prnt.CurrentSymbol+" ",prof);
-            return prof;
-        }
-        else if (ROOT.trade.type == SELL)
-        {
-            bool prof = checkProfit((_prnt.PriceAsk - cl) * SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_MARGIN_INITIAL), _tp);
-        Print(_prnt.CurrentSymbol+" ",prof);
-            return prof;
+        case BUY:
+            if (cl > _prnt.PriceAsk)
+            {
+                double pl = (cl - _prnt.PriceAsk);
+                double prof = pl * (TickValue / TickSize) * lots;
+                return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
+            }
+            break;
+        case SELL:
+            if (_prnt.PriceBid > cl)
+            {
+                double pl = (_prnt.PriceBid - cl);
+                double prof = pl * (TickValue / TickSize) * lots;
+                return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
+            }
+            break;
         }
         return false;
     };
@@ -185,8 +195,10 @@ public:
         {
             if (!profitInRange(_prnt, _tp))
                 calculateTPSL(_prnt, _tp + 1);
-        }else{
-            // DCOB.FIBO_RET.
-        };
+            else
+                ROOT.reverseBreakoutFound = true;
+        }
+        else
+            ROOT.reverseBreakoutFound = false;
     };
 }

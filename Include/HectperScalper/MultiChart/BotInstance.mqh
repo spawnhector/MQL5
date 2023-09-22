@@ -40,7 +40,7 @@ public:
     currentBar = iBarShift(CurrentSymbol, PERIOD_M1, TimeCurrent());
     previousBar = currentBar + 1;
 
-    _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface();
+    _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface(this);
     _point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
     // _SDCS[chartindex].DCS[ProviderIndex].OnTestTick(this);
     _SDCS[chartindex].DCS[ProviderIndex].Optimize(this);

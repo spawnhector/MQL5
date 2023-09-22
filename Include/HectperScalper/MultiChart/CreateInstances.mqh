@@ -45,7 +45,6 @@ void CreateInstances() // attach all virtual robots to charts
       for (int i = 0; i < ArraySize(_PROVIDERS); i++)
       {
           BI = new BotInstance(i, _index);
-
           ArrayResize(Bots, ArraySize(Bots) + 1);
           Bots[ArraySize(Bots) - 1] = BI;
       }

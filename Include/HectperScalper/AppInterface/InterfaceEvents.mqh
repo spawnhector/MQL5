@@ -187,7 +187,7 @@ double OptimalLot(string CurrentSymbol, double takeProfitDiff) // function for c
   {
 
     riskAmount = accountEquity * (riskPercentage / 100.0);
-    point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
+    point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
     tickValue = SymbolInfoDouble(CurrentSymbol, SYMBOL_TRADE_TICK_VALUE);
     pointDiff = takeProfitDiff / point;
     lotSize = riskAmount / pointDiff;

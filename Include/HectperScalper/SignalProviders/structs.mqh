@@ -22,6 +22,7 @@ struct chartObjects
     datetime time;
     double support;
     double resistance;
+    double line_price;
 } __COB;
 
 struct stA0
@@ -87,19 +88,22 @@ struct ChartObjects
 
         struct Fibo_Levels_Type
         {
-            struct Levels
+            struct Types
             {
-                double price;
-            } LEVELS[];
-        } FIBO_LEVELS_TYPE[2];
+                struct Levels
+                {
+                    double price;
+                } LEVELS[];
+            } TYPE[2];
+        } FIBO_LEVELS[121]; // size of _chartSymbol.Symbol
 
-        void Draw(DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
+        void Draw(int symIndex, DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
             _name = "BB-Plot-" + DCID.symbol + "_Fibonacci_" + EnumToString(nameCat);
             levelObjName = _name + "_Level_";
             double FibonacciLevels[] = {0.0, 0.236, 0.382, 0.5, 0.618, 1.0, 1.618, 2.618, 3.618, 4.618, 5.618, 6.618, 7.618, 8.618, 9.618, 10.618};
             fiboSize = ArraySize(FibonacciLevels);
-            ArrayResize(FIBO_LEVELS_TYPE[nameCat].LEVELS, fiboSize);
+            ArrayResize(FIBO_LEVELS[symIndex].TYPE[nameCat].LEVELS, fiboSize);
             ObjectDelete(DCID.chartID, _name);
             for (int i = 1; i < fiboSize; i++)
             {
@@ -115,20 +119,20 @@ struct ChartObjects
                     ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_WIDTH, 2);
                     ObjectSetInteger(DCID.chartID, _levelObjName, OBJPROP_COLOR, clrDimGray);
                 }
-                FIBO_LEVELS_TYPE[nameCat].LEVELS[i].price = fiboPrice;
+                FIBO_LEVELS[symIndex].TYPE[nameCat].LEVELS[i].price = fiboPrice;
             }
             ChartRedraw(DCID.chartID);
         };
 
-        void AddFibo_Ret(double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
+        void AddFibo_Ret(int symIndex, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
-            Draw(_START, startPrice, endPrice, time, display);
-            Draw(_REVERSE, endPrice, startPrice, time, display);
+            Draw(symIndex, _START, startPrice, endPrice, time, display);
+            Draw(symIndex, _REVERSE, endPrice, startPrice, time, display);
         };
 
-        double GetFiboLevel(DCOBJ_PROP _ty, int level)
+        double GetFiboLevel(int symIndex, DCOBJ_PROP _ty, int level)
         {
-            return FIBO_LEVELS_TYPE[_ty].LEVELS[level].price;
+            return FIBO_LEVELS[symIndex].TYPE[_ty].LEVELS[level].price;
         };
     } FIBO_RET;
 
@@ -138,7 +142,6 @@ struct ChartObjects
         void Draw(AppValues lineType, datetime time, double level)
         {
             _name = "BB-Plot-" + DCID.symbol + "-" + EnumToString(lineType);
-            ;
             ObjectCreate(DCID.chartID, _name, OBJ_HLINE, 0, time, level);
             ObjectSetInteger(DCID.chartID, _name, OBJPROP_COLOR, clrBlue);
         };
@@ -149,6 +152,19 @@ struct ChartObjects
             Draw(RESISTANCELINE, time, resistance);
         };
     } BREAKOUT_LEVELS;
+
+    struct Ask_Line
+    {
+        string _name;
+        void AddAskLine(double ask_price)
+        {
+            _name = "BB-Ask-Line-" + DCID.symbol;
+            if (ObjectCreate(DCID.chartID, _name, OBJ_HLINE, 0, TimeCurrent(), ask_price))
+            {
+                ObjectSetInteger(DCID.chartID, _name, OBJPROP_COLOR, clrRed);
+            }
+        };
+    } ASK_LINE;
 } DCOB;
 
 struct InterfaceHandler
@@ -164,7 +180,7 @@ struct InterfaceHandler
                     switch (_RT.__COBS[i].name)
                     {
                     case FIBO_RET:
-                        DCOB.FIBO_RET.AddFibo_Ret(_RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
+                        DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_RT.symbol), _RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
                         break;
                     case BREAKOUT_LEVELS:
                         DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
@@ -172,7 +188,20 @@ struct InterfaceHandler
                     }
                 }
                 toUpdate = false;
+            };
+
+        if (DCID.symbol == _RT.symbol)
+        {
+            for (int i = 0; i < ArraySize(_RT.__COBS); i++)
+            {
+                switch (_RT.__COBS[i].name)
+                {
+                case ASK_LINE:
+                    DCOB.ASK_LINE.AddAskLine(_RT.__COBS[i].line_price);
+                    break;
+                }
             }
+        };
     };
 
     void removeObject(stc01 &root)
@@ -317,21 +346,10 @@ struct ChartSymbol
     {
         double margin;
         bool res;
-        switch (type)
-        {
-        case BUY:
-            res = OrderCalcMargin(ORDER_TYPE_BUY, sym, vol, pri, margin);
-            if (res)
-                if (AccountInfoDouble(ACCOUNT_BALANCE) >= (margin / AccountInfoInteger(ACCOUNT_LEVERAGE)))
-                    return true;
-            break;
-        case SELL:
-            res = OrderCalcMargin(ORDER_TYPE_SELL, sym, vol, pri, margin);
-            if (res)
-                if (AccountInfoDouble(ACCOUNT_BALANCE) >= (margin / AccountInfoInteger(ACCOUNT_LEVERAGE)))
-                    return true;
-            break;
-        }
-        return false;
+        res = OrderCalcMargin((type == BUY ? ORDER_TYPE_BUY : ORDER_TYPE_SELL), sym, vol, pri, margin);
+        if (res)
+            if (AccountInfoDouble(ACCOUNT_BALANCE) >= (margin / AccountInfoInteger(ACCOUNT_LEVERAGE)))
+                return true;
+        return true;
     };
 } __chartSymbol;

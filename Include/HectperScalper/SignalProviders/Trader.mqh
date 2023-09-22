@@ -60,11 +60,13 @@ public:
             switch (chartData.trade.type)
             {
             case BUY:
-                hasMargin = __chartSymbol.hasEnoughMargin(BUY,chartData.symbol,chartData.BOBVolume,PriceBid);
-                if(hasMargin)___trade = m_trade.Buy(0.02, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                hasMargin = __chartSymbol.hasEnoughMargin(BUY,chartData.symbol,chartData.BOBVolume,PriceAsk);
+                Print("buy ",hasMargin);
+                if(hasMargin)___trade = m_trade.Buy(0.02, chartData.symbol, PriceAsk, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             case SELL:
                 hasMargin = __chartSymbol.hasEnoughMargin(SELL,chartData.symbol,chartData.BOBVolume,PriceBid);
+                Print("sell ",hasMargin);
                 if(hasMargin)___trade = m_trade.Sell(0.02, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             }

@@ -42,8 +42,11 @@ public:
         _parent._TestTrade(ROOT);
     };
 
-    void UpdateInterface() override
+    void UpdateInterface(_Trader &_parent) override
     {
+        __COB.name = ASK_LINE;
+        __COB.line_price = _parent.PriceAsk;
+        this.addRootObject(__COB);
         DCID.root.update(ROOT);
     };
 
