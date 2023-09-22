@@ -32,6 +32,7 @@ public:
 
     void OnTick(_Trader &_parent) override
     {
+        InterfaceRoot.startTickCount = GetTickCount();
         CheckPriceBreakOut(_parent);
         if (ROOT.reverseBreakoutFound)
             _parent._Trade(ROOT);

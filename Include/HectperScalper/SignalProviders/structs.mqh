@@ -170,6 +170,7 @@ struct ChartObjects
 struct InterfaceHandler
 {
     bool toUpdate;
+    uint startTickCount;
     void update(stc01 &_RT)
     {
         if (toUpdate)
@@ -209,6 +210,14 @@ struct InterfaceHandler
         ArrayFree(root.__COBS);
         ObjectsDeleteAll(DCID.chartID, "BB-Plot-" + root.symbol);
     };
+
+    void LogExecutionTime(const string processName, uint _startTickCount)
+    {
+        uint elapsedMilliseconds = GetTickCount() - _startTickCount;
+        double elapsedSeconds = elapsedMilliseconds / 1000.0;
+        if (elapsedMilliseconds > 0)
+            Print("Process '", processName, "' took ", elapsedMilliseconds, " ms (", elapsedSeconds, " seconds)");
+    }
 } InterfaceRoot;
 
 struct DCInterfaceData

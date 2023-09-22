@@ -26,8 +26,7 @@ public:
     checkChart();
   };
 
-  ~BotInstance(){
-  };
+  ~BotInstance(){};
 
   void InstanceTick()
   {
@@ -50,12 +49,15 @@ public:
       int isSelected = IsInArray(selectedProviders, ProviderIndex);
       if (isSelected != -1)
       {
-        _SDCS[chartindex].DCS[ProviderIndex].OnTick(this);
+        _SDCS[chartindex]
+            .DCS[ProviderIndex]
+            .OnTick(this);
       }
     }
   };
 
-  void checkChart(){
+  void checkChart()
+  {
     _INTERFACE = _PROVIDERS[ProviderIndex].getChartInterface();
     _DC = _INTERFACE.getChartAnalizer();
     _DC.analyzeChart(this);
