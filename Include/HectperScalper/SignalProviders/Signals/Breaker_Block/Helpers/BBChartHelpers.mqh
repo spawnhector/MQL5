@@ -52,7 +52,6 @@ public:
             this.checkVolume(_prnt, RESISTANCELINE, true);
         if (ROOT.ResistanceLevelPassed && _prnt.PriceBid < ROOT.ResistanceLevel)
             this.unCheckVolume(_prnt, RESISTANCELINE, false);
-        InterfaceRoot.LogExecutionTime("Check price break out for " + _prnt.CurrentSymbol, InterfaceRoot.startTickCount);
     };
 
     void switchLevelType(int levelType, bool typeVal) // level type: SUPPORTLINE support(low), RESISTANCELINE resistance(high)

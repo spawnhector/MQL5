@@ -34,6 +34,7 @@ public:
     {
         InterfaceRoot.startTickCount = GetTickCount();
         CheckPriceBreakOut(_parent);
+        InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
         if (ROOT.reverseBreakoutFound)
             _parent._Trade(ROOT);
     };
