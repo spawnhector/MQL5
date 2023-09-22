@@ -6,7 +6,7 @@
         {
             "label": "Compile-Project-X",
             "type": "shell",
-            "command": "C:\\Users\\spawn\\AppData\\Roaming\\MetaQuotes\\Terminal\\776D2ACDFA4F66FAF3C8985F75FA9FF6\\MQL5\\Compile-MQL.ps1  C:\\Users\\spawn\\AppData\\Roaming\\MetaQuotes\\Terminal\\776D2ACDFA4F66FAF3C8985F75FA9FF6\\MQL5\\Experts\\Advisors\\hectper\\hectperScalperMultiChart.mq5",
+            "command": "C:\\Users\\spawn\\AppData\\Roaming\\MetaQuotes\\Terminal\\776D2ACDFA4F66FAF3C8985F75FA9FF6\\MQL5\\Compile-MQL.ps1  C:\\Users\\spawn\\AppData\\Roaming\\MetaQuotes\\Terminal\\776D2ACDFA4F66FAF3C8985F75FA9FF6\\MQL5\\Experts\\Advisors\\hectper\\HSMC.mq5",
             "presentation": {
                 "echo": true,
                 "reveal": "always",

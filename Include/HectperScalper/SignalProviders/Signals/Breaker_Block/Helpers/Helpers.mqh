@@ -18,7 +18,7 @@ public:
     {
         // int rangeStartBar = DCID.startBar.barIndex; // Start bar index of the range
         int rangeStartBar = 1;                // Start bar index of the range
-        int rangeEndBar = rangeStartBar + 1; // End bar index of the range
+        int rangeEndBar = rangeStartBar + 50; // End bar index of the range
 
         MqlRates rates[];
         int copiedBars = CopyRates(syb, _prd, rangeStartBar, rangeEndBar - rangeStartBar + 1, rates);
@@ -48,39 +48,39 @@ public:
     };
 };
 
-
 class BBDCInterfaceHelpers : public DCInterface
 {
 protected:
-    DrawRSLine* DrawRSLines;
+    DrawRSLine *DrawRSLines;
     _Trader parent;
 
 public:
-    BBDCInterfaceHelpers(){ DrawRSLines = new DrawRSLine();};
-    ~BBDCInterfaceHelpers(){
+    BBDCInterfaceHelpers() { DrawRSLines = new DrawRSLine(); };
+    ~BBDCInterfaceHelpers()
+    {
         delete DrawRSLines;
     };
     ProviderData providerData;
-
 };
 
 class BBDCHelpers : public D_c
 {
 protected:
-    DrawRSLine* DrawRSLines;
+    DrawRSLine *DrawRSLines;
 
 public:
-    BBDCHelpers(){ DrawRSLines = new DrawRSLine();};
-    ~BBDCHelpers(){
+    BBDCHelpers() { DrawRSLines = new DrawRSLine(); };
+    ~BBDCHelpers()
+    {
         delete DrawRSLines;
     };
     stc01 ROOT;
     ProviderData providerData;
 
-    void addRootObject(chartObjects &cob){
+    void addRootObject(chartObjects &cob)
+    {
         ArrayResize(ROOT.__COBS, ArraySize(ROOT.__COBS) + 1);
         ROOT.__COBS[ArraySize(ROOT.__COBS) - 1] = cob;
     };
-
 };
 //+------------------------------------------------------------------+
