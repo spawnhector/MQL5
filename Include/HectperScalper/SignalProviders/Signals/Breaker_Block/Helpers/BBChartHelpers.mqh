@@ -152,7 +152,7 @@ public:
 
     bool checkProfit(_Trader &_prnt, double _profit, int _tp, DCOBJ_PROP _ty)
     {
-        if (_profit > 0.01)
+        if (_profit > 0.3)
         {
             ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _ty, _tp - 2);
             ROOT.trade.tp = cl;
@@ -165,7 +165,6 @@ public:
     {
         double TickValue = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_VALUE);
         double TickSize = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_SIZE);
-        double lots = 0.05;
         cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), (ROOT.trade.type == BUY ? _REVERSE : _START), _tp);
         switch (ROOT.trade.type)
         {
@@ -173,7 +172,7 @@ public:
             if (cl > _prnt.PriceAsk)
             {
                 double pl = (cl - _prnt.PriceAsk);
-                double prof = pl * (TickValue / TickSize) * lots;
+                double prof = pl * (TickValue / TickSize) * lot_size;
                 return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
             }
             break;
@@ -181,7 +180,7 @@ public:
             if (_prnt.PriceBid > cl)
             {
                 double pl = (_prnt.PriceBid - cl);
-                double prof = pl * (TickValue / TickSize) * lots;
+                double prof = pl * (TickValue / TickSize) * lot_size;
                 return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
             }
             break;

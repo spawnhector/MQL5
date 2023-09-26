@@ -36,7 +36,11 @@ public:
         CheckPriceBreakOut(_parent);
         InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
         if (ROOT.reverseBreakoutFound)
+        {
+            InterfaceRoot.startTickCount = GetTickCount();
             _parent._Trade(ROOT);
+            InterfaceRoot.LogExecutionTime("Placing trade for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
+        };
     };
 
     void OnTestTick(_Trader &_parent) override
@@ -46,14 +50,18 @@ public:
 
     void UpdateInterface(_Trader &_parent) override
     {
+        InterfaceRoot.startTickCount = GetTickCount();
         __COB.name = ASK_LINE;
         __COB.line_price = _parent.PriceAsk;
         this.addRootObject(__COB);
         DCID.root.update(ROOT);
+        InterfaceRoot.LogExecutionTime("Updating the interface ", InterfaceRoot.startTickCount);
     };
 
     void Optimize(_Trader &_parent) override
     {
+        InterfaceRoot.startTickCount = GetTickCount();
         Optimizer.optimize(_parent, ROOT, this);
+        InterfaceRoot.LogExecutionTime("Optimizer for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
     };
 };
