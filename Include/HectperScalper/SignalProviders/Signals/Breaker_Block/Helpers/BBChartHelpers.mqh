@@ -10,7 +10,7 @@ public:
 
     BBChartHelpers()
     {
-        tp = 3;
+        tp = 9;
     };
     ~BBChartHelpers(){};
 
@@ -124,7 +124,7 @@ public:
                 endPrice = ROOT.SupportLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
                 Print("SUPPORTLINE");
-                // calculateTPSL(_prnt, tp);
+                calculateTPSL(_prnt, tp);
             }
             break;
         case RESISTANCELINE:
@@ -135,7 +135,7 @@ public:
                 endPrice = ROOT.ResistanceLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
                 Print("RESISTANCELINE");
-                // calculateTPSL(_prnt, tp);
+                calculateTPSL(_prnt, tp);
             }
             break;
         }
@@ -146,7 +146,6 @@ public:
             __COB.endPrice = endPrice;
             __COB.time = ROOT.rangeTime;
             this.addRootObject(__COB);
-            Print(_prnt.CurrentSymbol + " trade type ", levelType);
         }
     };
 
@@ -204,10 +203,12 @@ public:
     {
         double TickValue = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_VALUE);
         double TickSize = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_SIZE);
-        cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), (ROOT.trade.type == SELL ? _REVERSE : _START), _tp);
+        cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _START, _tp);
         switch (ROOT.trade.type)
         {
         case BUY:
+                Print("tp ",cl);
+                Print("ask ",_prnt.PriceAsk);
             if (cl > _prnt.PriceAsk)
             {
                 double pl = (cl - _prnt.PriceAsk);
@@ -216,6 +217,8 @@ public:
             }
             break;
         case SELL:
+                Print("tp ",cl);
+                Print("bid ",_prnt.PriceBid);
             if (_prnt.PriceBid > cl)
             {
                 double pl = (_prnt.PriceBid - cl);

@@ -113,7 +113,7 @@ struct ChartObjects
                     double price;
                 } LEVELS[];
             } TYPE[2];
-        } FIBO_LEVELS[580]; // size of _chartSymbol.Symbol
+        } FIBO_LEVELS[100000]; // size of _chartSymbol.Symbol
 
         void Draw(int symIndex, DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
