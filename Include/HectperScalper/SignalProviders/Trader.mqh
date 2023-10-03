@@ -64,14 +64,14 @@ public:
                 // Print("buy ",hasMargin);
                 Print(chartData.symbol + " " + DoubleToString(PriceAsk) + " sl: " + DoubleToString(chartData.trade.sl) + " tp: " + DoubleToString(chartData.trade.tp));
                 if (hasMargin)
-                    ___trade = m_trade.Buy(lot_size, chartData.symbol, PriceAsk, chartData.trade.sl, chartData.trade.tp, NULL);
+                    ___trade = m_trade.Buy(lot_size, chartData.symbol, PriceAsk, 0, chartData.trade.tp, NULL);
                 break;
             case SELL:
                 hasMargin = __chartSymbol.hasEnoughMargin(SELL, chartData.symbol, chartData.BOBVolume, PriceBid);
                 // Print("sell ",hasMargin);
                 Print(chartData.symbol + " " + DoubleToString(PriceBid) + " sl: " + DoubleToString(chartData.trade.sl) + " tp: " + DoubleToString(chartData.trade.tp));
                 if (hasMargin)
-                    ___trade = m_trade.Sell(lot_size, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                    ___trade = m_trade.Sell(lot_size, chartData.symbol, PriceBid, 0, chartData.trade.tp, NULL);
                 break;
             }
             if (___trade)

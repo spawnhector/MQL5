@@ -43,19 +43,15 @@ public:
         };
     };
 
-    void OnTestTick(_Trader &_parent) override
-    {
-        _parent._TestTrade(ROOT);
-    };
-
     void UpdateInterface(_Trader &_parent) override
     {
-        InterfaceRoot.startTickCount = GetTickCount();
-        __COB.name = ASK_LINE;
-        __COB.line_price = _parent.PriceAsk;
-        this.addRootObject(__COB);
-        DCID.root.update(ROOT);
-        InterfaceRoot.LogExecutionTime("Updating the interface ", InterfaceRoot.startTickCount);
+        if (DCID.symbol == ROOT.symbol)
+        {
+            __COB.name = ASK_LINE;
+            __COB.line_price = _parent.PriceAsk;
+            this.addRootObject(__COB);
+            DCID.root.update(ROOT);
+        };
     };
 
     void Optimize(_Trader &_parent) override

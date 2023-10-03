@@ -76,6 +76,24 @@ struct stc01
         double sl;
     } trade;
     chartObjects __COBS[];
+    void removeCOBS(double target)
+    {
+        int length = ArraySize(__COBS);
+        for (int _index = 0; _index < length; ++_index)
+        {
+            if (_index == target)
+            {
+                if (_index >= 0 && _index < length)
+                {
+                    for (int i = _index; i < length - 1; i++)
+                    {
+                        __COBS[i] = __COBS[i + 1];
+                    }
+                    ArrayResize(__COBS, length - 1);
+                }
+            }
+        }
+    };
 } __root;
 
 struct ChartObjects
@@ -95,7 +113,7 @@ struct ChartObjects
                     double price;
                 } LEVELS[];
             } TYPE[2];
-        } FIBO_LEVELS[121]; // size of _chartSymbol.Symbol
+        } FIBO_LEVELS[580]; // size of _chartSymbol.Symbol
 
         void Draw(int symIndex, DCOBJ_PROP nameCat, double startPrice, double endPrice, datetime time, DCOBJ_PROP display)
         {
@@ -173,36 +191,33 @@ struct InterfaceHandler
     uint startTickCount;
     void update(stc01 &_RT)
     {
-        if (toUpdate)
-            if (DCID.symbol == _RT.symbol)
-            {
-                for (int i = 0; i < ArraySize(_RT.__COBS); i++)
-                {
-                    switch (_RT.__COBS[i].name)
-                    {
-                    case FIBO_RET:
-                        DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_RT.symbol), _RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
-                        break;
-                    case BREAKOUT_LEVELS:
-                        DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
-                        break;
-                    }
-                }
-                toUpdate = false;
-            };
-
-        if (DCID.symbol == _RT.symbol)
+        InterfaceRoot.startTickCount = GetTickCount();
+        for (int i = 0; i < ArraySize(_RT.__COBS); i++)
         {
-            for (int i = 0; i < ArraySize(_RT.__COBS); i++)
+            if (toUpdate)
             {
                 switch (_RT.__COBS[i].name)
                 {
-                case ASK_LINE:
-                    DCOB.ASK_LINE.AddAskLine(_RT.__COBS[i].line_price);
+                case FIBO_RET:
+                    DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_RT.symbol), _RT.__COBS[i].startPrice, _RT.__COBS[i].endPrice, _RT.__COBS[i].time, _SHOW);
+                    _RT.removeCOBS(i);
+                    break;
+                case BREAKOUT_LEVELS:
+                    DCOB.BREAKOUT_LEVELS.AddBreakOut_Levels(_RT.__COBS[i].support, _RT.__COBS[i].resistance, _RT.__COBS[i].time);
+                    _RT.removeCOBS(i);
                     break;
                 }
+                toUpdate = false;
+            };
+            switch (_RT.__COBS[i].name)
+            {
+            case ASK_LINE:
+                DCOB.ASK_LINE.AddAskLine(_RT.__COBS[i].line_price);
+                _RT.removeCOBS(i);
+                break;
             }
-        };
+        }
+        InterfaceRoot.LogExecutionTime("Updating the interface " + _RT.symbol, InterfaceRoot.startTickCount);
     };
 
     void removeObject(stc01 &root)
@@ -215,8 +230,8 @@ struct InterfaceHandler
     {
         uint elapsedMilliseconds = GetTickCount() - _startTickCount;
         double elapsedSeconds = elapsedMilliseconds / 1000.0;
-        if (elapsedMilliseconds > 0)
-            Print("Process '", processName, "' took ", elapsedMilliseconds, " ms (", elapsedSeconds, " seconds)");
+        // if (elapsedMilliseconds > 0)
+        //     Print("Process '", processName, "' took ", elapsedMilliseconds, " ms (", elapsedSeconds, " seconds)");
     }
 } InterfaceRoot;
 
@@ -263,16 +278,28 @@ struct ChartSymbol
 
     bool writeFile(int fileHandle)
     {
-        int totalSymbols = SymbolsTotal(false);
-        for (int i = 0; i < totalSymbols; i++)
+        if (isTestAccount)
         {
-            string symbolName = SymbolName(i, false); // Get the symbol name
-            if (IsTradeAllowed(symbolName) == true)
+            if (IsTradeAllowed(_Symbol) == true)
             {
-                FileWrite(fileHandle, symbolName); // Write the symbol name to the file
+                FileWrite(fileHandle, _Symbol); // Write the symbol name to the file
                 symbolLength = symbolLength + 1;
             }
         }
+        else
+        {
+            int totalSymbols = SymbolsTotal(false);
+            for (int i = 0; i < totalSymbols; i++)
+            {
+                string symbolName = SymbolName(i, false); // Get the symbol name
+                if (IsTradeAllowed(symbolName) == true)
+                {
+                    FileWrite(fileHandle, symbolName); // Write the symbol name to the file
+                    symbolLength = symbolLength + 1;
+                }
+            }
+        }
+
         FileClose(fileHandle);
         return true;
     };

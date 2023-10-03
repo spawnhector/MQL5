@@ -16,9 +16,9 @@ public:
 
     void plot(string syb, ENUM_TIMEFRAMES _prd)
     {
-        // int rangeStartBar = DCID.startBar.barIndex; // Start bar index of the range
-        int rangeStartBar = 1;                // Start bar index of the range
-        int rangeEndBar = rangeStartBar + 50; // End bar index of the range
+        int strt = isTestAccount ? 1 : 50;
+        int rangeStartBar = 1;                  // Start bar index of the range
+        int rangeEndBar = rangeStartBar + strt; // End bar index of the range
 
         MqlRates rates[];
         int copiedBars = CopyRates(syb, _prd, rangeStartBar, rangeEndBar - rangeStartBar + 1, rates);

@@ -17,9 +17,11 @@ void CreateInstances() // attach all virtual robots to charts
   ArrayResize(_PARENTS, ArraySize(Charts));
   for (int j = 0; j < ArraySize(Charts); j++)
   {
+
     int _index = __chartSymbol.symbolIndex(Charts[j].CurrentSymbol);
     if (_index != -1)
     {
+      
       _SDCS[_index] = new SDCS();
       ArrayResize(_SDCS[_index].DCS, ArraySize(_PROVIDERS));
       for (int i = 0; i < ArraySize(_PROVIDERS); i++)

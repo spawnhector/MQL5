@@ -39,7 +39,7 @@ int OnInit()
   {
     if (isTestAccount)
     {
-      addToArray(selectedProviders, 1);
+      addToArray(selectedProviders, 0);
       strat_trade = true;
       startButtonClicked = true;
     }
@@ -55,7 +55,11 @@ int OnInit()
     CreateCharts();
     CreateInstances();
     if (bInterfaceE)
+    {
+      InterfaceRoot.startTickCount = GetTickCount();
       CreateSimpleInterface();
+      InterfaceRoot.LogExecutionTime("Creating the interface ", InterfaceRoot.startTickCount);
+    };
     return (INIT_SUCCEEDED);
   }
   Print("Failed to add symbols.");

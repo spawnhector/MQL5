@@ -42,16 +42,125 @@ public:
         this.addRootObject(__COB);
     };
 
-    void CheckPriceBreakOut(_Trader &_prnt)
+    void TestCheckPriceBreakOut(_Trader &_prnt)
     {
         if (_prnt.PriceAsk < ROOT.SupportLevel)
-            this.checkVolume(_prnt, SUPPORTLINE, true);
-        if (ROOT.SupportLevelPassed && _prnt.PriceAsk > ROOT.SupportLevel)
-            this.unCheckVolume(_prnt, SUPPORTLINE, false);
+            this.isRBOFound(_prnt, SUPPORTLINE);
         if (_prnt.PriceBid > ROOT.ResistanceLevel)
-            this.checkVolume(_prnt, RESISTANCELINE, true);
-        if (ROOT.ResistanceLevelPassed && _prnt.PriceBid < ROOT.ResistanceLevel)
-            this.unCheckVolume(_prnt, RESISTANCELINE, false);
+            this.isRBOFound(_prnt, RESISTANCELINE);
+    };
+
+    void CheckPriceBreakOut(_Trader &_prnt)
+    {
+        if (isTestAccount)
+        {
+            TestCheckPriceBreakOut(_prnt);
+        }
+        else
+        {
+            if (_prnt.PriceAsk < ROOT.SupportLevel)
+                this.checkVolume(_prnt, SUPPORTLINE, true);
+            if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
+                this.unCheckVolume(_prnt, SUPPORTLINE, false);
+            if (_prnt.PriceBid > ROOT.ResistanceLevel)
+                this.checkVolume(_prnt, RESISTANCELINE, true);
+            if (ROOT.ResistanceLevelPassed && _prnt.PriceAsk < ROOT.ResistanceLevel)
+                this.unCheckVolume(_prnt, RESISTANCELINE, false);
+        }
+    };
+
+    void checkVolume(_Trader &_prnt, int levelType, bool typeVal)
+    {
+        this.switchLevelType(levelType, typeVal);
+        this.switchTradeType(levelType);
+        if (!ROOT.volumeChecked)
+        {
+            ROOT.volumeChecked = true;
+            ROOT.BOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar);
+            ROOT.BBOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar + 1);
+            if (!ROOT.breakoutFound)
+                this.isBOFound(levelType);
+            if (ROOT.breakoutFound)
+                this.isRBOFound(_prnt, levelType);
+        }
+    };
+
+    void unCheckVolume(_Trader &_prnt, int levelType, bool typeVal)
+    {
+        this.switchLevelType(levelType, typeVal);
+        ROOT.volumeChecked = false;
+    };
+
+    void isBOFound(int levelType)
+    {
+        switch (levelType)
+        {
+        case SUPPORTLINE:
+            ROOT.breakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
+            break;
+        case RESISTANCELINE:
+            ROOT.breakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
+            break;
+        }
+        if (!ROOT.breakoutFound)
+            ROOT.volumeChecked = false;
+    };
+
+    void isRBOFound(_Trader &_prnt, int levelType)
+    {
+        if (isTestAccount)
+        {
+            this.switchLevelType(levelType, true);
+            this.switchTradeType(levelType);
+        }
+
+        switch (levelType)
+        {
+        case SUPPORTLINE:
+            ROOT.reverseBreakoutFound = isTestAccount ? true : (ROOT.BOBVolume < ROOT.BBOBVolume ? true : false);
+            if (ROOT.reverseBreakoutFound)
+            {
+                startPrice = ROOT.ResistanceLevel;
+                endPrice = ROOT.SupportLevel;
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
+                Print("SUPPORTLINE");
+                // calculateTPSL(_prnt, tp);
+            }
+            break;
+        case RESISTANCELINE:
+            ROOT.reverseBreakoutFound = isTestAccount ? true : (ROOT.BOBVolume > ROOT.BBOBVolume ? true : false);
+            if (ROOT.reverseBreakoutFound)
+            {
+                startPrice = ROOT.SupportLevel;
+                endPrice = ROOT.ResistanceLevel;
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
+                Print("RESISTANCELINE");
+                // calculateTPSL(_prnt, tp);
+            }
+            break;
+        }
+        if (ROOT.reverseBreakoutFound)
+        {
+            __COB.name = FIBO_RET;
+            __COB.startPrice = startPrice;
+            __COB.endPrice = endPrice;
+            __COB.time = ROOT.rangeTime;
+            this.addRootObject(__COB);
+            Print(_prnt.CurrentSymbol + " trade type ", levelType);
+        }
+    };
+
+    void calculateTPSL(_Trader &_prnt, int _tp)
+    {
+        if (_tp < (DCOB.FIBO_RET.fiboSize - 1))
+        {
+            if (!profitInRange(_prnt, _tp))
+                calculateTPSL(_prnt, _tp + 1);
+            else
+                ROOT.reverseBreakoutFound = true;
+        }
+        else
+            ROOT.reverseBreakoutFound = false;
     };
 
     void switchLevelType(int levelType, bool typeVal) // level type: SUPPORTLINE support(low), RESISTANCELINE resistance(high)
@@ -80,81 +189,11 @@ public:
         }
     };
 
-    void isBOFound(int levelType)
-    {
-        switch (levelType)
-        {
-        case SUPPORTLINE:
-            ROOT.breakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
-            break;
-        case RESISTANCELINE:
-            ROOT.breakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
-            break;
-        }
-    };
-
-    void isRBOFound(_Trader &_prnt, int levelType)
-    {
-        switch (levelType)
-        {
-        case SUPPORTLINE:
-            ROOT.reverseBreakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
-            if (ROOT.reverseBreakoutFound)
-            {
-                startPrice = ROOT.SupportLevel;
-                endPrice = ROOT.ResistanceLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
-                calculateTPSL(_prnt, tp);
-            }
-            break;
-        case RESISTANCELINE:
-            ROOT.reverseBreakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
-            if (ROOT.reverseBreakoutFound)
-            {
-                startPrice = ROOT.ResistanceLevel;
-                endPrice = ROOT.SupportLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
-                calculateTPSL(_prnt, tp);
-            }
-            break;
-        }
-        if (ROOT.reverseBreakoutFound)
-        {
-            __COB.name = FIBO_RET;
-            __COB.startPrice = startPrice;
-            __COB.endPrice = endPrice;
-            __COB.time = ROOT.rangeTime;
-            this.addRootObject(__COB);
-            this.switchTradeType(levelType);
-        }
-    };
-
-    void checkVolume(_Trader &_prnt, int levelType, bool typeVal)
-    {
-        this.switchLevelType(levelType, typeVal);
-        if (!ROOT.volumeChecked)
-        {
-            ROOT.volumeChecked = true;
-            ROOT.BOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar);
-            ROOT.BBOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar + 1);
-            if (!ROOT.breakoutFound)
-                this.isBOFound(levelType);
-            if (ROOT.breakoutFound)
-                this.isRBOFound(_prnt, levelType);
-        }
-    };
-
-    void unCheckVolume(_Trader &_prnt, int levelType, bool typeVal)
-    {
-        this.switchLevelType(levelType, typeVal);
-        ROOT.volumeChecked = false;
-    };
-
     bool checkProfit(_Trader &_prnt, double _profit, int _tp, DCOBJ_PROP _ty)
     {
         if (_profit > 0.3)
         {
-            ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _ty, _tp - 2);
+            // ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _ty, _tp - 2);
             ROOT.trade.tp = cl;
             return true;
         }
@@ -165,7 +204,7 @@ public:
     {
         double TickValue = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_VALUE);
         double TickSize = SymbolInfoDouble(_prnt.CurrentSymbol, SYMBOL_TRADE_TICK_SIZE);
-        cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), (ROOT.trade.type == BUY ? _REVERSE : _START), _tp);
+        cl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), (ROOT.trade.type == SELL ? _REVERSE : _START), _tp);
         switch (ROOT.trade.type)
         {
         case BUY:
@@ -186,18 +225,5 @@ public:
             break;
         }
         return false;
-    };
-
-    void calculateTPSL(_Trader &_prnt, int _tp)
-    {
-        if (_tp < (DCOB.FIBO_RET.fiboSize - 1))
-        {
-            if (!profitInRange(_prnt, _tp))
-                calculateTPSL(_prnt, _tp + 1);
-            else
-                ROOT.reverseBreakoutFound = true;
-        }
-        else
-            ROOT.reverseBreakoutFound = false;
     };
 }
