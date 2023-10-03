@@ -230,8 +230,8 @@ struct InterfaceHandler
     {
         uint elapsedMilliseconds = GetTickCount() - _startTickCount;
         double elapsedSeconds = elapsedMilliseconds / 1000.0;
-        // if (elapsedMilliseconds > 0)
-        //     Print("Process '", processName, "' took ", elapsedMilliseconds, " ms (", elapsedSeconds, " seconds)");
+        if (elapsedMilliseconds > 0)
+            Print("Process '", processName, "' took ", elapsedMilliseconds, " ms (", elapsedSeconds, " seconds)");
     }
 } InterfaceRoot;
 

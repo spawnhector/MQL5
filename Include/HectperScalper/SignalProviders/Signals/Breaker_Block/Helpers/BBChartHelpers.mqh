@@ -122,8 +122,7 @@ public:
             {
                 startPrice = ROOT.ResistanceLevel;
                 endPrice = ROOT.SupportLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
-                Print("SUPPORTLINE");
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
             break;
@@ -133,8 +132,7 @@ public:
             {
                 startPrice = ROOT.SupportLevel;
                 endPrice = ROOT.ResistanceLevel;
-                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _SHOW);
-                Print("RESISTANCELINE");
+                DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
             break;
@@ -207,8 +205,6 @@ public:
         switch (ROOT.trade.type)
         {
         case BUY:
-                Print("tp ",cl);
-                Print("ask ",_prnt.PriceAsk);
             if (cl > _prnt.PriceAsk)
             {
                 double pl = (cl - _prnt.PriceAsk);
@@ -217,8 +213,6 @@ public:
             }
             break;
         case SELL:
-                Print("tp ",cl);
-                Print("bid ",_prnt.PriceBid);
             if (_prnt.PriceBid > cl)
             {
                 double pl = (_prnt.PriceBid - cl);
