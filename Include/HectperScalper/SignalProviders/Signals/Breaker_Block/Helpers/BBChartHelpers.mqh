@@ -186,11 +186,15 @@ public:
         }
     };
 
+    bool calculateSL(double greater, double lesser){
+        ROOT.trade.sl = (greater - lesser) / 2;
+        return true;
+    };
+
     bool checkProfit(_Trader &_prnt, double _profit, int _tp, DCOBJ_PROP _ty)
     {
         if (_profit > 0.3)
         {
-            // ROOT.trade.sl = DCOB.FIBO_RET.GetFiboLevel(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), _ty, _tp - 2);
             ROOT.trade.tp = cl;
             return true;
         }
@@ -209,7 +213,7 @@ public:
             {
                 double pl = (cl - _prnt.PriceAsk);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(cl,_prnt.PriceAsk) : false;
             }
             break;
         case SELL:
@@ -217,7 +221,7 @@ public:
             {
                 double pl = (_prnt.PriceBid - cl);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, (ROOT.trade.type == BUY ? _START : _REVERSE));
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(_prnt.PriceBid,cl) : false;
             }
             break;
         }

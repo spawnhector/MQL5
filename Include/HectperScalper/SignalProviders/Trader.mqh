@@ -62,12 +62,12 @@ public:
             case BUY:
                 hasMargin = __chartSymbol.hasEnoughMargin(BUY, chartData.symbol, chartData.BOBVolume, PriceAsk);
                 if (hasMargin && (PriceAsk < chartData.trade.tp))
-                    ___trade = m_trade.Buy(lot_size, chartData.symbol, PriceAsk, 0, chartData.trade.tp, NULL);
+                    ___trade = m_trade.Buy(lot_size, chartData.symbol, PriceAsk, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             case SELL:
                 hasMargin = __chartSymbol.hasEnoughMargin(SELL, chartData.symbol, chartData.BOBVolume, PriceBid);
                 if (hasMargin && (PriceBid > chartData.trade.tp))
-                    ___trade = m_trade.Sell(lot_size, chartData.symbol, PriceBid, 0, chartData.trade.tp, NULL);
+                    ___trade = m_trade.Sell(lot_size, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
                 break;
             }
             if (___trade)
