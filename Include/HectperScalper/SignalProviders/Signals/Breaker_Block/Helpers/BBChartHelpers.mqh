@@ -186,8 +186,10 @@ public:
         }
     };
 
-    bool calculateSL(double greater, double lesser){
-        ROOT.trade.sl = (greater - lesser) / 2;
+    bool calculateSL(double greater, double lesser, AppValues _type){
+        double diff = (greater - lesser) / 2;
+        if(_type == BUY) ROOT.trade.sl = lesser - diff;
+        if(_type == SELL) ROOT.trade.sl = greater + diff;
         return true;
     };
 
@@ -213,7 +215,7 @@ public:
             {
                 double pl = (cl - _prnt.PriceAsk);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(cl,_prnt.PriceAsk) : false;
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(cl,_prnt.PriceAsk,BUY) : false;
             }
             break;
         case SELL:
@@ -221,7 +223,7 @@ public:
             {
                 double pl = (_prnt.PriceBid - cl);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(_prnt.PriceBid,cl) : false;
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(_prnt.PriceBid,cl,SELL) : false;
             }
             break;
         }

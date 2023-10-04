@@ -37,9 +37,7 @@ public:
         InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
         if (ROOT.reverseBreakoutFound)
         {
-            InterfaceRoot.startTickCount = GetTickCount();
             _parent._Trade(ROOT);
-            InterfaceRoot.LogExecutionTime("Placing trade for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
         };
     };
 

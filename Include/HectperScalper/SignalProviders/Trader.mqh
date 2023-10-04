@@ -53,6 +53,7 @@ public:
     {
         if (!chartData.trade.open)
         {
+            InterfaceRoot.startTickCount = GetTickCount();
             bool ___trade;
             bool hasMargin;
             int mag = GetMagicF();
@@ -76,6 +77,7 @@ public:
                 chartData.trade.open = true;
                 ulong Ticket = m_trade.ResultOrder();
                 addOpenOrder(mag);
+                InterfaceRoot.LogExecutionTime("Placing trade for " + chartData.symbol, InterfaceRoot.startTickCount);
             }
         }
     };
