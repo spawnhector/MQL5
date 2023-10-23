@@ -26,6 +26,7 @@ protected:
     double foundSellTrendLines[];
     int orederPriceIndex;
     string extractedValue;
+    string extractedPrefix;
 
 public:
     TradeOptimizer(){
@@ -50,33 +51,30 @@ public:
 
     bool isTradeClosed(_Trader &parent, double custom_magic, D_c &sub_parent)
     {
-        HistorySelect(algoStartTime, TimeCurrent());
-        string comment;
-        uint total = HistoryOrdersTotal();
-        ulong ticket = 0;
-        long order_ticket;
-        long magic;
-        string symbol;
-        double order_price;
-        long order_type;
-        for (uint i = 0; i < total; i++)
+        if (HistorySelect(algoStartTime, TimeCurrent()))
         {
-            if ((ticket = HistoryOrderGetTicket(i)) > 0)
+            int totalDeals = HistoryDealsTotal();
+            if (totalDeals > 0)
             {
-                comment = HistoryOrderGetString(ticket, ORDER_COMMENT);
-                symbol = HistoryOrderGetString(ticket, ORDER_SYMBOL);
-                order_ticket = HistoryOrderGetInteger(ticket, ORDER_TICKET);
-                magic = HistoryOrderGetInteger(ticket, ORDER_MAGIC);
-                order_price = HistoryOrderGetDouble(order_ticket, ORDER_PRICE_OPEN);
-                order_type = HistoryOrderGetInteger(order_ticket, ORDER_TYPE);
+                long magic;
+                long dealTicket = HistoryDealGetInteger(HistoryOrderGetTicket(totalDeals - 1), DEAL_TICKET);
+                string comment = HistoryDealGetString(HistoryOrderGetTicket(totalDeals - 1), DEAL_COMMENT);
+                magic = HistoryOrderGetInteger(dealTicket, ORDER_MAGIC);
                 if (magic == custom_magic)
                     if (extractVal(comment, "[tp") || extractVal(comment, "[sl") || extractVal(comment, "tp") || extractVal(comment, "sl"))
                     {
-                        if (removeClosedTrades(parent, custom_magic, StringToDouble(extractedValue), sub_parent))
+                        if (extractedPrefix == "[tp" || extractedPrefix == "tp")
                         {
-                            sendSignal("'trade_status':'Close','trade_ticket':" + IntegerToString(ticket) + ",'magic':" + IntegerToString(magic));
+                            won = won + 1;
+                            ClosedTades = ClosedTades + 1;
                             return true;
-                        };
+                        }
+                        if (extractedPrefix == "[sl" || extractedPrefix == "sl")
+                        {
+                            loss = loss + 1;
+                            ClosedTades = ClosedTades + 1;
+                            return true;
+                        }
                     }
             }
         }
@@ -85,21 +83,11 @@ public:
 
     bool extractVal(string inputString, string prefix)
     {
-        int startPos = StringFind(inputString, prefix);
-        if (startPos >= 0)
+        int index = StringFind(inputString, prefix);
+        if (index >= 0)
         {
-            startPos += StringLen(prefix); // Move to the end of the prefix
-            int endPos = StringFind(inputString, "]", startPos);
-
-            if (endPos >= 0)
-            {
-                extractedValue = StringSubstr(inputString, startPos, endPos - startPos);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            extractedPrefix = prefix;
+            return true;
         }
         else
         {
@@ -107,49 +95,6 @@ public:
         }
     };
     //+------------------------------------------------------------------+
-
-    bool removeClosedTrades(_Trader &parent, double custom_magic, double closed_order_price, D_c &sub_parent)
-    {
-        HistorySelect(algoStartTime, TimeCurrent());
-        uint total = HistoryOrdersTotal();
-        ulong ticket = 0;
-        long order_ticket;
-        string symbol;
-        long magic;
-        double order_price;
-        double order_tp;
-        double order_sl;
-        long order_type;
-        for (uint i = 0; i < total; i++)
-        {
-            if ((ticket = HistoryOrderGetTicket(i)) > 0)
-            {
-                order_ticket = HistoryOrderGetInteger(ticket, ORDER_TICKET);
-                magic = HistoryOrderGetInteger(ticket, ORDER_MAGIC);
-                order_price = HistoryOrderGetDouble(order_ticket, ORDER_PRICE_OPEN);
-                order_tp = HistoryOrderGetDouble(order_ticket, ORDER_TP);
-                order_sl = HistoryOrderGetDouble(order_ticket, ORDER_SL);
-                order_type = HistoryOrderGetInteger(order_ticket, ORDER_TYPE);
-                symbol = HistoryOrderGetString(ticket, ORDER_SYMBOL);
-                if (magic == custom_magic)
-                {
-                    if (closed_order_price == order_tp)
-                    {
-                        won = won + 1;
-                        ClosedTades = ClosedTades + 1;
-                        return true;
-                    }
-                    if (closed_order_price == order_sl)
-                    {
-                        loss = loss + 1;
-                        ClosedTades = ClosedTades + 1;
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    };
 
     void cleanUpBot(_Trader &parent, double custom_magic, D_c &sub_parent)
     {

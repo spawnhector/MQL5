@@ -38,16 +38,16 @@ public:
     CurrentSymbol = Charts[chartindex].CurrentSymbol;
     currentBar = iBarShift(CurrentSymbol, PERIOD_M1, TimeCurrent());
     previousBar = currentBar + 1;
-
-    _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface(this);
     _point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
-    _SDCS[chartindex].DCS[ProviderIndex].Optimize(this);
     if (strat_trade && bNewBar())
     {
+      newBarCount = newBarCount + 1;
+      _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface(this);
       _SetState();
       int isSelected = IsInArray(selectedProviders, ProviderIndex);
       if (isSelected != -1)
         _SDCS[chartindex].DCS[ProviderIndex].OnTick(this);
+      _SDCS[chartindex].DCS[ProviderIndex].Optimize(this);
     }
   };
 

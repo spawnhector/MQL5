@@ -209,13 +209,13 @@ struct InterfaceHandler
                 }
                 toUpdate = false;
             };
-            switch (_RT.__COBS[i].name)
-            {
-            case ASK_LINE:
-                DCOB.ASK_LINE.AddAskLine(_RT.__COBS[i].line_price);
-                _RT.removeCOBS(i);
-                break;
-            }
+            // switch (_RT.__COBS[i].name)
+            // {
+            // case ASK_LINE:
+            //     DCOB.ASK_LINE.AddAskLine(_RT.__COBS[i].line_price);
+            //     _RT.removeCOBS(i);
+            //     break;
+            // }
         }
         InterfaceRoot.LogExecutionTime("Updating the interface " + _RT.symbol, InterfaceRoot.startTickCount);
     };
@@ -341,7 +341,7 @@ struct ChartSymbol
             }
             m_widget_Infos.nSymbols = 0;
             ArrayResize(m_widget_Infos.Symbols, symbolLength);
-            for (int c0 = 1; (!FileIsEnding(file)) && (!_StopFlag); c0++)
+            for (int c0 = 1; (isTestAccount? (c0 < 2) : (!FileIsEnding(file)) && (!_StopFlag)); c0++)
             {
                 if ((sz0 = FileReadString(file)) == "")
                     continue;

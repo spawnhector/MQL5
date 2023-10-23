@@ -10,7 +10,7 @@ public:
 
     BBChartHelpers()
     {
-        tp = 9;
+        tp = 2;
     };
     ~BBChartHelpers(){};
 
@@ -52,21 +52,15 @@ public:
 
     void CheckPriceBreakOut(_Trader &_prnt)
     {
-        if (isTestAccount)
-        {
-            TestCheckPriceBreakOut(_prnt);
-        }
-        else
-        {
-            if (_prnt.PriceAsk < ROOT.SupportLevel)
-                this.checkVolume(_prnt, SUPPORTLINE, true);
-            if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
-                this.unCheckVolume(_prnt, SUPPORTLINE, false);
-            if (_prnt.PriceBid > ROOT.ResistanceLevel)
-                this.checkVolume(_prnt, RESISTANCELINE, true);
-            if (ROOT.ResistanceLevelPassed && _prnt.PriceAsk < ROOT.ResistanceLevel)
-                this.unCheckVolume(_prnt, RESISTANCELINE, false);
-        }
+
+        if (_prnt.PriceAsk < ROOT.SupportLevel)
+            this.checkVolume(_prnt, SUPPORTLINE, true);
+        if (ROOT.SupportLevelPassed && _prnt.PriceBid > ROOT.SupportLevel)
+            this.unCheckVolume(_prnt, SUPPORTLINE, false);
+        if (_prnt.PriceBid > ROOT.ResistanceLevel)
+            this.checkVolume(_prnt, RESISTANCELINE, true);
+        if (ROOT.ResistanceLevelPassed && _prnt.PriceAsk < ROOT.ResistanceLevel)
+            this.unCheckVolume(_prnt, RESISTANCELINE, false);
     };
 
     void checkVolume(_Trader &_prnt, int levelType, bool typeVal)
@@ -79,7 +73,7 @@ public:
             ROOT.BOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar);
             ROOT.BBOBVolume = iVolume(_prnt.CurrentSymbol, PERIOD_M1, _prnt.previousBar + 1);
             if (!ROOT.breakoutFound)
-                this.isBOFound(levelType);
+                this.isBOFound(_prnt, levelType);
             if (ROOT.breakoutFound)
                 this.isRBOFound(_prnt, levelType);
         }
@@ -89,10 +83,14 @@ public:
     {
         this.switchLevelType(levelType, typeVal);
         ROOT.volumeChecked = false;
+        ROOT.breakoutFound = false;
+        _prnt.newBarCount = 0;
     };
 
-    void isBOFound(int levelType)
+    void isBOFound(_Trader &_prnt, int levelType)
     {
+        if (plotStart == _prnt.newBarCount)
+            this.reAnalyzeChart(_prnt);
         switch (levelType)
         {
         case SUPPORTLINE:
@@ -108,30 +106,30 @@ public:
 
     void isRBOFound(_Trader &_prnt, int levelType)
     {
-        if (isTestAccount)
-        {
-            this.switchLevelType(levelType, true);
-            this.switchTradeType(levelType);
-        }
+        // if (isTestAccount)
+        // {
+        //     this.switchLevelType(levelType, true);
+        //     this.switchTradeType(levelType);
+        // }
 
         switch (levelType)
         {
         case SUPPORTLINE:
-            ROOT.reverseBreakoutFound = isTestAccount ? true : (ROOT.BOBVolume < ROOT.BBOBVolume ? true : false);
+            ROOT.reverseBreakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
             if (ROOT.reverseBreakoutFound)
             {
-                startPrice = ROOT.ResistanceLevel;
-                endPrice = ROOT.SupportLevel;
+                startPrice = ROOT.SupportLevel;
+                endPrice = ROOT.ResistanceLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
             break;
         case RESISTANCELINE:
-            ROOT.reverseBreakoutFound = isTestAccount ? true : (ROOT.BOBVolume > ROOT.BBOBVolume ? true : false);
+            ROOT.reverseBreakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
             if (ROOT.reverseBreakoutFound)
             {
-                startPrice = ROOT.SupportLevel;
-                endPrice = ROOT.ResistanceLevel;
+                startPrice = ROOT.ResistanceLevel;
+                endPrice = ROOT.SupportLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
@@ -178,24 +176,27 @@ public:
         switch (levelType)
         {
         case SUPPORTLINE:
-            ROOT.trade.type = SELL;
+            ROOT.trade.type = BUY;
             break;
         case RESISTANCELINE:
-            ROOT.trade.type = BUY;
+            ROOT.trade.type = SELL;
             break;
         }
     };
 
-    bool calculateSL(double greater, double lesser, AppValues _type){
+    bool calculateSL(double greater, double lesser, AppValues _type)
+    {
         double diff = (greater - lesser) / 2;
-        if(_type == BUY) ROOT.trade.sl = lesser - diff;
-        if(_type == SELL) ROOT.trade.sl = greater + diff;
+        if (_type == BUY)
+            ROOT.trade.sl = lesser - diff;
+        if (_type == SELL)
+            ROOT.trade.sl = greater + diff;
         return true;
     };
 
     bool checkProfit(_Trader &_prnt, double _profit, int _tp, DCOBJ_PROP _ty)
     {
-        if (_profit > 0.3)
+        if (_profit > 0.6)
         {
             ROOT.trade.tp = cl;
             return true;
@@ -215,7 +216,7 @@ public:
             {
                 double pl = (cl - _prnt.PriceAsk);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(cl,_prnt.PriceAsk,BUY) : false;
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(cl, _prnt.PriceAsk, BUY) : false;
             }
             break;
         case SELL:
@@ -223,7 +224,7 @@ public:
             {
                 double pl = (_prnt.PriceBid - cl);
                 double prof = pl * (TickValue / TickSize) * lot_size;
-                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(_prnt.PriceBid,cl,SELL) : false;
+                return checkProfit(_prnt, prof, _tp, _START) ? calculateSL(_prnt.PriceBid, cl, SELL) : false;
             }
             break;
         }

@@ -23,6 +23,8 @@ public:
     MqlRates rte[];
     int ProviderIndex;
     double _point;
+    bool ___trade;
+    int newBarCount;
 
     _Trader()
     {
@@ -49,12 +51,12 @@ public:
         ArrayFree(closes);
     }
 
-    void _Trade(stc01 &chartData)
+    bool _Trade(stc01 &chartData)
     {
+        ___trade = false;
         if (!chartData.trade.open)
         {
             InterfaceRoot.startTickCount = GetTickCount();
-            bool ___trade;
             bool hasMargin;
             int mag = GetMagicF();
             m_trade.SetExpertMagicNumber(mag);
@@ -80,13 +82,13 @@ public:
                 InterfaceRoot.LogExecutionTime("Placing trade for " + chartData.symbol, InterfaceRoot.startTickCount);
             }
         }
+        return ___trade;
     };
 
     void _TestTrade(stc01 &chartData)
     {
         if (chartData.trade.open != true)
         {
-            bool ___trade;
             int mag = GetMagicF();
             m_trade.SetExpertMagicNumber(mag);
             ___trade = m_trade.Sell(0.10, CurrentSymbol, PriceAsk, PriceAsk + (_point * 200), PriceBid - (_point * 200), NULL);

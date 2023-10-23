@@ -23,11 +23,15 @@ public:
 
     void reAnalyzeChart(_Trader &_parent) override
     {
+        _parent.newBarCount = 0;
+        ROOT.trade.open = false;
+        ROOT.reverseBreakoutFound = false;
+        ROOT.volumeChecked = false;
+        ROOT.breakoutFound = false;
         ROOT.analyzing = true;
         DCID.root.removeObject(ROOT);
         IdentifySupportResistanceLevels(_parent);
         DCID.root.toUpdate = true;
-        ROOT.trade.open = false;
     };
 
     void OnTick(_Trader &_parent) override
@@ -35,9 +39,17 @@ public:
         InterfaceRoot.startTickCount = GetTickCount();
         CheckPriceBreakOut(_parent);
         InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
+        
         if (ROOT.reverseBreakoutFound)
         {
-            _parent._Trade(ROOT);
+            if (_parent._Trade(ROOT))
+            {
+
+                __COB.name = FIBO_RET;
+                __COB.startPrice = startPrice;
+                __COB.endPrice = endPrice;
+                __COB.time = ROOT.rangeTime;
+            };
         };
     };
 
@@ -45,9 +57,9 @@ public:
     {
         if (DCID.symbol == ROOT.symbol)
         {
-            __COB.name = ASK_LINE;
-            __COB.line_price = _parent.PriceAsk;
-            this.addRootObject(__COB);
+            // __COB.name = ASK_LINE;
+            // __COB.line_price = _parent.PriceAsk;
+            // this.addRootObject(__COB);
             DCID.root.update(ROOT);
         };
     };
