@@ -15,7 +15,7 @@
 CSymbolInfo m_symbolinfo;
 #include <Trade\PositionInfo.mqh>
 #include <Trade\Trade.mqh>
-#include <Trade\DealInfo.mqh>
+#include <Trade\HistoryOrderInfo.mqh>
 CPositionInfo m_position; // trade position object
 CTrade m_trade;           // trading object
 

@@ -41,7 +41,6 @@ public:
     _point = NormalizeDouble(SymbolInfoDouble(CurrentSymbol, SYMBOL_POINT), _Digits);
     if (strat_trade && bNewBar())
     {
-      newBarCount = newBarCount + 1;
       _SDCS[chartindex].DCS[ProviderIndex].UpdateInterface(this);
       _SetState();
       int isSelected = IsInArray(selectedProviders, ProviderIndex);

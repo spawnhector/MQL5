@@ -23,6 +23,7 @@ public:
 
     void reAnalyzeChart(_Trader &_parent) override
     {
+        _parent.___trade = false;
         _parent.newBarCount = 0;
         ROOT.trade.open = false;
         ROOT.reverseBreakoutFound = false;
@@ -36,20 +37,28 @@ public:
 
     void OnTick(_Trader &_parent) override
     {
-        InterfaceRoot.startTickCount = GetTickCount();
-        CheckPriceBreakOut(_parent);
-        InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
-        
-        if (ROOT.reverseBreakoutFound)
+        if (!_parent.___trade)
         {
-            if (_parent._Trade(ROOT))
+            InterfaceRoot.startTickCount = GetTickCount();
+            CheckPriceBreakOut(_parent);
+            InterfaceRoot.LogExecutionTime("Check price break out for " + _parent.CurrentSymbol, InterfaceRoot.startTickCount);
+            if (ROOT.reverseBreakoutFound)
             {
-
-                __COB.name = FIBO_RET;
-                __COB.startPrice = startPrice;
-                __COB.endPrice = endPrice;
-                __COB.time = ROOT.rangeTime;
+                if (_parent._Trade(ROOT))
+                {
+                    __COB.name = FIBO_RET;
+                    __COB.startPrice = startPrice;
+                    __COB.endPrice = endPrice;
+                    __COB.time = ROOT.rangeTime;
+                };
+            }
+            else
+            {
+                if (plotStart == _parent.newBarCount)
+                    this.reAnalyzeChart(_parent);
             };
+        }else{
+            this.trailProfit(_parent, this.tp);
         };
     };
 
