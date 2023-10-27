@@ -31,6 +31,8 @@ public:
         ROOT.breakoutFound = false;
         ROOT.analyzing = true;
         DCID.root.removeObject(ROOT);
+        this.foundTempCl = 0;
+        this.tempCl = 0;
         IdentifySupportResistanceLevels(_parent);
         DCID.root.toUpdate = true;
     };

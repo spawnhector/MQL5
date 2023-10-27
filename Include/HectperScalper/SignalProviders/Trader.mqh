@@ -24,6 +24,7 @@ public:
     int ProviderIndex;
     double _point;
     bool ___trade;
+    ulong __Ticket;
     int newBarCount;
 
     _Trader()
@@ -66,18 +67,20 @@ public:
                 hasMargin = __chartSymbol.hasEnoughMargin(BUY, chartData.symbol, chartData.BOBVolume, PriceAsk);
                 if (hasMargin && (PriceAsk < chartData.trade.tp))
                     ___trade = m_trade.Buy(lot_size, chartData.symbol, PriceAsk, chartData.trade.sl, chartData.trade.tp, NULL);
+                    if(___trade)TBPositions++;
                 break;
             case SELL:
                 hasMargin = __chartSymbol.hasEnoughMargin(SELL, chartData.symbol, chartData.BOBVolume, PriceBid);
                 if (hasMargin && (PriceBid > chartData.trade.tp))
                     ___trade = m_trade.Sell(lot_size, chartData.symbol, PriceBid, chartData.trade.sl, chartData.trade.tp, NULL);
+                    if(___trade)TSPositions++;
                 break;
             }
             if (___trade)
             {
                 DCID.root.toUpdate = true;
                 chartData.trade.open = true;
-                ulong Ticket = m_trade.ResultOrder();
+                __Ticket = m_trade.ResultOrder();
                 addOpenOrder(mag);
                 InterfaceRoot.LogExecutionTime("Placing trade for " + chartData.symbol, InterfaceRoot.startTickCount);
             }
@@ -95,7 +98,7 @@ public:
             if (___trade)
             {
                 chartData.trade.open = true;
-                ulong Ticket = m_trade.ResultOrder();
+                __Ticket = m_trade.ResultOrder();
                 addOpenOrder(mag);
             }
         }

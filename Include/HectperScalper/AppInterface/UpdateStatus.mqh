@@ -54,10 +54,10 @@ void UpdateStatus() // update interface state
    ObjectSetString(0, OwnObjectNames[7], OBJPROP_TEXT, TempText);
    ///////////////////////////
    TempText = "Buy positions : ";
-   TempText += DoubleToString(NormalizeDouble(CalculateBuyQuantity(), 0), 0);
+   TempText += DoubleToString(NormalizeDouble(CalculateBuyQuantity(), 0), 0) +"  ("+IntegerToString(TBPositions)+") ";
    ObjectSetString(0, OwnObjectNames[9], OBJPROP_TEXT, TempText);
    TempText = "Sell positions : ";
-   TempText += DoubleToString(NormalizeDouble(CalculateSellQuantity(), 0), 0);
+   TempText += DoubleToString(NormalizeDouble(CalculateSellQuantity(), 0), 0) +"  ("+IntegerToString(TSPositions)+") ";
    ObjectSetString(0, OwnObjectNames[10], OBJPROP_TEXT, TempText);
    TempText = "Buy lots : ";
    TempText += DoubleToString(NormalizeDouble(CalculateBuyLots(), 3), 3);

@@ -8,6 +8,7 @@ public:
     int tp;
     double cl;
     double tempCl;
+    double foundTempCl;
 
     BBChartHelpers()
     {
@@ -102,8 +103,8 @@ public:
             ROOT.reverseBreakoutFound = ROOT.BOBVolume > ROOT.BBOBVolume ? true : false;
             if (ROOT.reverseBreakoutFound)
             {
-                startPrice = ROOT.SupportLevel;
-                endPrice = ROOT.ResistanceLevel;
+                startPrice = ROOT.ResistanceLevel;
+                endPrice = ROOT.SupportLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
@@ -112,8 +113,8 @@ public:
             ROOT.reverseBreakoutFound = ROOT.BOBVolume < ROOT.BBOBVolume ? true : false;
             if (ROOT.reverseBreakoutFound)
             {
-                startPrice = ROOT.ResistanceLevel;
-                endPrice = ROOT.SupportLevel;
+                startPrice = ROOT.SupportLevel;
+                endPrice = ROOT.ResistanceLevel;
                 DCOB.FIBO_RET.AddFibo_Ret(__chartSymbol.symbolIndex(_prnt.CurrentSymbol), startPrice, endPrice, DCID.rangeTime, _HIDE);
                 calculateTPSL(_prnt, tp);
             }
@@ -160,10 +161,10 @@ public:
         switch (levelType)
         {
         case SUPPORTLINE:
-            ROOT.trade.type = BUY;
+            ROOT.trade.type = SELL;
             break;
         case RESISTANCELINE:
-            ROOT.trade.type = SELL;
+            ROOT.trade.type = BUY ;
             break;
         }
     };
@@ -227,10 +228,20 @@ public:
             {
                 for (int i = PositionsTotal() - 1; i >= 0; i--)
                 {
-                    if (PositionGetTicket(i) == _prnt.___trade)
+                    ulong tempTicket = PositionGetTicket(i);
+                    if (tempTicket == _prnt.__Ticket)
                     {
-                        Print("modifing trade");
-                        m_trade.PositionModify(_prnt.___trade, PositionGetDouble(POSITION_SL), tempCl);
+                        // PositionSelect(tempTicket);
+                        // if (PositionModify(tempTicket, PositionGetDouble(POSITION_VOLUME), PositionGetDouble(POSITION_PRICE_OPEN), tempCl, PositionGetDouble(POSITION_TP), newComment) == POS_ERR_NO_ERROR)
+                        // {
+                        //     Print("Position ", position_ticket, " comment modified to: ", newComment);
+                        // }
+                        // else
+                        // {
+                        //     Print("Failed to modify the position comment.");
+                        // }
+                        m_trade.PositionModify(_prnt.__Ticket, tempCl, PositionGetDouble(POSITION_TP));
+                        // Posi
                     }
                 }
             };
@@ -245,12 +256,24 @@ public:
         switch (ROOT.trade.type)
         {
         case BUY:
-            if (_prnt.PriceBid > tempCl && ROOT.BOBVolume > currentVol)
+            if ((_prnt.PriceBid > ROOT.ResistanceLevel) 
+            && (tempCl > ROOT.ResistanceLevel) 
+            && (_prnt.PriceBid > tempCl) 
+            && (foundTempCl == 0 || tempCl > foundTempCl))
+            {
+                foundTempCl = tempCl;
                 result = true;
+            };
             break;
         case SELL:
-            if (_prnt.PriceAsk < tempCl && ROOT.BOBVolume < currentVol)
+            if ((_prnt.PriceAsk < ROOT.SupportLevel ) 
+            && (tempCl < ROOT.SupportLevel) 
+            && (_prnt.PriceAsk < tempCl) 
+            && (foundTempCl == 0 || tempCl < foundTempCl))
+            {
+                foundTempCl = tempCl;
                 result = true;
+            };
             break;
         };
         return result;
